@@ -43,7 +43,8 @@ typedef enum : NSUInteger {
 	NumeralStyleAll,
 	NumeralStyleCardinal,
 	NumeralStyleNone,
-	NumeralStyleMAX
+	NumeralStyleMAX,
+    NumeralStyleGuage
 } NumeralStyle;
 
 typedef enum : NSUInteger {
@@ -52,13 +53,15 @@ typedef enum : NSUInteger {
 	TickmarkStyleMinor,
 	TickmarkStyleStackMajor,
 	TickmarkStyleNone,
-	TickmarkStyleMAX
+	TickmarkStyleMAX,
+    TickmarkStyleGauge
 } TickmarkStyle;
 
 typedef enum : NSUInteger {
 	FaceStyleRound,
 	FaceStyleRectangular,
-	FaceStyleMAX
+	FaceStyleMAX,
+    FaceStyleGauge
 } FaceStyle;
 
 typedef enum : NSUInteger {
@@ -130,6 +133,7 @@ typedef enum : NSUInteger {
 
 @property BOOL useBackgroundImageOverlay;
 @property BOOL useMasking;
+@property BOOL showSecondhand;
 
 @property CGSize faceSize;
 

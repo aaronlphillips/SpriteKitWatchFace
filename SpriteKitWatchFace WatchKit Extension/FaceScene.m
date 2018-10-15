@@ -99,7 +99,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		
 		self.dateStyle = DateStyleDayDate;
 		self.dateQuadrant = DateQuadrantRight;
-		
+        
 		[self refreshTheme];
 		
 		NSLog(@"Permutations per theme = %lu", FaceStyleMAX*NumeralStyleMAX*TickmarkStyleMAX*(TickmarkShapeMAX*2)*ColorRegionStyleMAX*DateStyleMAX*CenterDiscStyleMAX*DateQuadrantMAX);
@@ -138,8 +138,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		tick.position = CGPointZero;
 		tick.anchorPoint = CGPointMake(0.5, (workingRadius-margin)/shortTickHeight);
 		tick.zRotation = angle;
-		
-		if (self.tickmarkStyle == TickmarkStyleAll || self.tickmarkStyle == TickmarkStyleMinor || self.tickmarkStyle == TickmarkStyleStackMajor)
+        
+        if (self.tickmarkStyle == TickmarkStyleAll || self.tickmarkStyle == TickmarkStyleMinor || self.tickmarkStyle == TickmarkStyleStackMajor)
 		{
 			if ((self.tickmarkStyle == TickmarkStyleStackMajor) || (self.tickmarkStyle == TickmarkStyleMinor) || i % 5 != 0)
 			{
@@ -505,6 +505,152 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	[self addChild:faceMarkings];
 }
 
+-(void)setupTickmarksForGaugeFaceWithLayerName:(NSString *)layerName
+{
+    CGFloat margin = 4.0;
+    CGFloat labelMargin = 10.0;
+    
+    SKCropNode *faceMarkings = [SKCropNode node];
+    faceMarkings.name = layerName;
+    
+    /* Hardcoded for 44mm Apple Watch */
+    
+    CGFloat shortTickWidth = 1;
+    CGFloat shortTickHeight = 0;
+    CGFloat shortTickScale = 1;
+    
+    
+    /* Minutes (bottom half) */
+    for (int i = 60; i >= 0; i--)
+    {
+        CGFloat workingRadius = self.faceSize.width/2;
+        //CGFloat angle = - ((2*M_PI)/60.0 * i); // full
+        CGFloat angle = -((M_PI)/60.0 * (60-i)) + (M_PI * 0.5);
+        
+        shortTickScale = 1;
+        margin = 4.0;
+        
+        shortTickHeight = workingRadius/20;
+        if (self.minorTickHeight > 0)
+            shortTickHeight = self.minorTickHeight;
+
+        // 5's
+        if (i % 5 == 0){
+            margin = 0.5;
+            shortTickHeight = 8;
+        }
+        // 10's
+        if (i % 10 == 0){
+            shortTickHeight = 6;
+            margin = 2.0;
+        }
+        
+        margin += 10.0;
+        
+        SKSpriteNode *tick = [SKSpriteNode spriteNodeWithColor:self.minorMarkColor size:CGSizeMake(shortTickWidth, shortTickHeight * shortTickScale)];
+        
+        tick.position = CGPointZero;
+        tick.anchorPoint = CGPointMake(0.5, (workingRadius-margin)/shortTickHeight);
+        tick.zRotation = angle;
+        
+        //if (self.tickmarkStyle == TickmarkStyleGauge)
+        //{
+        
+        // every 1 minute, between 5's and 10's
+        if(i % 5 != 0){
+            tick.alpha = 0.3;
+        }
+        
+        [faceMarkings addChild:tick];
+        
+        // 10's Minute Number Labels
+        if(i % 10 == 0){
+            labelMargin = 3;
+            CGFloat h = 8;
+            CGFloat extraY = 0;
+            CGFloat extraX = 0;
+            
+            NSDictionary *attribs = @{NSFontAttributeName : [NSFont systemFontOfSize:h weight:NSFontWeightMedium], NSForegroundColorAttributeName : self.textColor};
+            NSString *labelString = [NSString stringWithFormat:@"%d", i]; //[NSString stringWithFormat:@"%@", i == 0 ? @"00" : ];
+            
+            if(i == 0 || i == 12){
+                //labelMargin = 16;
+            }
+            
+            if(i == 0){
+                labelString = @"00";
+            }
+            
+            NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:labelString attributes:attribs];
+            
+            SKLabelNode *numberLabel = [SKLabelNode labelNodeWithAttributedText:labelText];
+            numberLabel.position = CGPointMake((workingRadius-labelMargin) * sin(angle) + extraX, (workingRadius-labelMargin) * -cos(angle) + extraY);
+            numberLabel.zRotation = angle;
+            
+            [faceMarkings addChild:numberLabel];
+        }
+    }
+    
+    /* Hours (top half) */
+    for (int i = 12; i >= 0; i--)
+    {
+        CGFloat workingRadius = self.faceSize.width/2;
+        CGFloat angle = ((M_PI)/12.0 * (12-i)) + (M_PI * 0.5);
+        
+        shortTickScale = 1;
+        margin = 4.0;
+        
+        shortTickHeight = workingRadius/20;
+        
+        margin += 10.0;
+        
+        SKSpriteNode *tick = [SKSpriteNode spriteNodeWithColor:self.minorMarkColor size:CGSizeMake(shortTickWidth, shortTickHeight * shortTickScale)];
+        
+        tick.position = CGPointZero;
+        tick.anchorPoint = CGPointMake(0.5, (workingRadius-margin)/shortTickHeight);
+        tick.zRotation = angle;
+
+        if(i % 3 == 0){
+            // cardinal, add hour number label instead of tick
+            
+            labelMargin = 20;
+            CGFloat h = 10;
+            CGFloat extraY = 0;
+            CGFloat extraX = 0;
+            
+            NSDictionary *attribs = @{NSFontAttributeName : [NSFont systemFontOfSize:h weight:NSFontWeightMedium], NSForegroundColorAttributeName : self.textColor};
+            NSString *labelString = [NSString stringWithFormat:@"%i", i == 0 ? 12 : i];
+            
+            if(i == 0 || i == 12){
+                labelMargin = 16;
+            }
+            
+            if(i == 0){
+                // @ 0-hour, we add date instead of 0 or 12
+                NSDateFormatter * df = [[NSDateFormatter alloc] init];
+                [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:[[NSLocale preferredLanguages] firstObject]]];
+                [df setDateFormat:@"d"];
+                labelString = [[df stringFromDate:[NSDate date]] uppercaseString];
+                NSLog(@"0th date text: %@", labelString);
+                
+                // TODO: add bg behind date
+            }
+            
+            NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:labelString attributes:attribs];
+            
+            SKLabelNode *numberLabel = [SKLabelNode labelNodeWithAttributedText:labelText];
+            numberLabel.position = CGPointMake((workingRadius-labelMargin) * sin(angle) + extraX, (workingRadius-labelMargin) * -cos(angle) + extraY);
+            
+            [faceMarkings addChild:numberLabel];
+        } else {
+            [faceMarkings addChild:tick];
+        }
+        
+    }
+    
+    [self addChild:faceMarkings];
+}
+
 -(void)updateDate
 {
 	if (self.dateStyle != DateStyleNone)
@@ -557,11 +703,34 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	SKColor *alternateTextColor = nil;
 
 	self.useMasking = NO;
+    self.showSecondhand = TRUE;
+    
+    NSLog(@"Using Theme = %lu", self.theme);
 	
 	switch (self.theme) {
             
         case ThemeGauge:
         {
+            colorRegionColor = [SKColor colorWithRed:0.848 green:0.187 blue:0.349 alpha:1];
+            faceBackgroundColor = [SKColor blackColor];
+            majorMarkColor = [SKColor whiteColor];
+            minorMarkColor = majorMarkColor;
+            inlayColor = [SKColor colorWithRed:1.0 green:0.647 blue:0.0431 alpha:1];
+            handColor = inlayColor; //[SKColor whiteColor];
+            textColor = [SKColor whiteColor];
+            secondHandColor = majorMarkColor;
+            
+            self.faceStyle = FaceStyleGauge;
+            self.showSecondhand = FALSE;
+            self.colorRegionStyle = ColorRegionStyleNone;
+            self.dateStyle = DateStyleDay;
+            
+            self.tickmarkStyle = TickmarkStyleGauge;
+            self.majorTickmarkShape = TickmarkShapeRectangular;
+            self.minorTickmarkShape = TickmarkShapeRectangular;
+            
+            self.numeralStyle = NumeralStyleGuage;
+            
             break;
         }
             
@@ -944,6 +1113,11 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	
 	secondHand.color = self.secondHandColor;
 	secondHand.colorBlendFactor = 1.0;
+    if(self.showSecondhand){
+        secondHand.alpha = 1.0;
+    }else{
+        secondHand.alpha = 0.0;
+    }
 	
 	self.backgroundColor = self.faceBackgroundColor;
 	
@@ -1013,10 +1187,14 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	
 	staticImageLayer.alpha = self.useBackgroundImageOverlay ? 1.0 : 0.0;
 	
-	if (self.faceStyle == FaceStyleRound)
+    if (self.faceStyle == FaceStyleRound)
 	{
 		[self setupTickmarksForRoundFaceWithLayerName:@"Markings"];
 	}
+    else if (self.faceStyle == FaceStyleGauge)
+    {
+        [self setupTickmarksForGaugeFaceWithLayerName:@"Markings"];
+    }
 	else
 	{
 		[self setupTickmarksForRectangularFaceWithLayerName:@"Markings"];
@@ -1042,7 +1220,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	
 	SKNode *colorRegion = [face childNodeWithName:@"Color Region"];
 	SKNode *colorRegionReflection = [face childNodeWithName:@"Color Region Reflection"];
-	
+    
 	faceMarkings.maskNode = colorRegion;
 	
 	self.textColor = self.alternateTextColor;
@@ -1091,9 +1269,15 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	SKNode *colorRegion = [face childNodeWithName:@"Color Region"];
 	SKNode *colorRegionReflection = [face childNodeWithName:@"Color Region Reflection"];
 
-	hourHand.zRotation =  - (2*M_PI)/12.0 * (CGFloat)(components.hour%12 + 1.0/60.0*components.minute);
-	minuteHand.zRotation =  - (2*M_PI)/60.0 * (CGFloat)(components.minute + 1.0/60.0*components.second);
-	secondHand.zRotation = - (2*M_PI)/60 * (CGFloat)(components.second + 1.0/NSEC_PER_SEC*components.nanosecond);
+    // TODO: smoothly animate to new position on wake
+    if (self.faceStyle == FaceStyleGauge){
+        hourHand.zRotation =  - (M_PI)/12.0 * ((CGFloat)(components.hour%12 + 1.0/60.0*components.minute)) + (M_PI * 0.5);
+        minuteHand.zRotation =  (M_PI)/60.0 * ((CGFloat)(components.minute + 1.0/60.0*components.second)) + (M_PI * 0.5);
+    } else {
+        hourHand.zRotation =  - (2*M_PI)/12.0 * (CGFloat)(components.hour%12 + 1.0/60.0*components.minute);
+        minuteHand.zRotation =  - (2*M_PI)/60.0 * (CGFloat)(components.minute + 1.0/60.0*components.second);
+        secondHand.zRotation = - (2*M_PI)/60 * (CGFloat)(components.second + 1.0/NSEC_PER_SEC*components.nanosecond);
+    }
 	
 	if (self.colorRegionStyle == ColorRegionStyleNone)
 	{
@@ -1154,10 +1338,16 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 - (void)keyDown:(NSEvent *)event
 {
 	char key = event.characters.UTF8String[0];
+    BOOL shiftKeyDown = ([event modifierFlags] & NSEventModifierFlagShift) != 0;
+    //NSLog(@"shift key down? %lu %@ %hhd", (unsigned long)[event modifierFlags], event.characters, shiftKeyDown);
 	
-	if (key == 't')
+	if (key == 't' || key == 'T')
 	{
-		int direction = 1;
+		signed int direction = 1;
+        if(shiftKeyDown){ // key == 'T'
+            direction = -1;
+        }
+        NSLog(@"%d", direction);
 		
 		if ((self.theme+direction > 0) && (self.theme+direction < ThemeMAX))
 			self.theme += direction;
