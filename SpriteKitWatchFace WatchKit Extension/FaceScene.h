@@ -106,6 +106,7 @@ typedef enum : NSUInteger {
 @property BOOL useMasking;
 @property BOOL showDate;
 @property BOOL showCenterDisc;
+
 @property NSString *dateFormatString;
 
 @property CGSize faceSize;
