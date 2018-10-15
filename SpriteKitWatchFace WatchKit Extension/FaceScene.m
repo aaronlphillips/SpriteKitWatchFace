@@ -566,7 +566,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         // 10's Minute Number Labels
         if(i % 10 == 0){
             labelMargin = 3;
-            CGFloat h = 8;
+            CGFloat h = 5;
             CGFloat extraY = 0;
             CGFloat extraX = 0;
             
@@ -705,6 +705,16 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	self.useMasking = NO;
     self.showSecondhand = TRUE;
     
+    SKNode *face = [self childNodeWithName:@"Face"];
+    SKNode *hourHand = [face childNodeWithName:@"Hours"];
+    SKNode *minuteHand = [face childNodeWithName:@"Minutes"];
+    SKNode *imageRoot = [face childNodeWithName:@"Image Root"];
+    imageRoot.zPosition = 0.0;
+    
+    SKSpriteNode *staticImageLayer = (SKSpriteNode *)[[face childNodeWithName:@"Image Root"] childNodeWithName:@"Static Image Layer"];
+    staticImageLayer.color = self.textColor;
+    staticImageLayer.colorBlendFactor = 1.0;
+    
     NSLog(@"Using Theme = %lu", self.theme);
 	
 	switch (self.theme) {
@@ -720,6 +730,13 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
             textColor = [SKColor whiteColor];
             secondHandColor = majorMarkColor;
             
+            self.useBackgroundImageOverlay = YES;
+            staticImageLayer.color = [SKColor clearColor];
+            staticImageLayer.colorBlendFactor = 0.0;
+            staticImageLayer.blendMode = SKBlendModeAlpha;
+            staticImageLayer.texture = [SKTexture textureWithImageNamed:@"Gauge_Face_Overlay"];
+            
+            
             self.faceStyle = FaceStyleGauge;
             self.showSecondhand = FALSE;
             self.colorRegionStyle = ColorRegionStyleNone;
@@ -730,6 +747,10 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
             self.minorTickmarkShape = TickmarkShapeRectangular;
             
             self.numeralStyle = NumeralStyleGuage;
+            
+            hourHand.zPosition = 1.0;
+            minuteHand.zPosition = 2.0;
+            imageRoot.zPosition = 3.0;
             
             break;
         }
@@ -1073,6 +1094,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		default:
 			break;
 	}
+    
+    staticImageLayer.alpha = self.useBackgroundImageOverlay ? 1.0 : 0.0;
 	
 	self.colorRegionColor = colorRegionColor;
 	self.faceBackgroundColor = faceBackgroundColor;
@@ -1101,8 +1124,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	SKSpriteNode *secondHand = (SKSpriteNode *)[face childNodeWithName:@"Seconds"];
 	SKSpriteNode *colorRegion = (SKSpriteNode *)[face childNodeWithName:@"Color Region"];
 	SKSpriteNode *colorRegionReflection = (SKSpriteNode *)[face childNodeWithName:@"Color Region Reflection"];
-	SKSpriteNode *staticImageLayer = (SKSpriteNode *)[[face childNodeWithName:@"Image Root"] childNodeWithName:@"Static Image Layer"];
-	
+    
 	SKSpriteNode *centerDisc = (SKSpriteNode *)[face childNodeWithName:@"Center Disc"];
 
 	hourHand.color = self.handColor;
@@ -1123,9 +1145,6 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	
 	colorRegion.color = self.colorRegionColor;
 	colorRegion.colorBlendFactor = 1.0;
-	
-	staticImageLayer.color = self.textColor;
-	staticImageLayer.colorBlendFactor = 1.0;
 	
 	hourHandInlay.color = self.inlayColor;
 	hourHandInlay.colorBlendFactor = 1.0;
@@ -1184,9 +1203,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		colorRegionReflection.position = CGPointZero;
 		colorRegionReflection.size = CGSizeMake(368*colorRegionScale, 448*colorRegionScale);
 	}
-	
-	staticImageLayer.alpha = self.useBackgroundImageOverlay ? 1.0 : 0.0;
-	
+    
     if (self.faceStyle == FaceStyleRound)
 	{
 		[self setupTickmarksForRoundFaceWithLayerName:@"Markings"];
