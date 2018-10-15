@@ -404,7 +404,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	{
 		NSDateFormatter * df = [[NSDateFormatter alloc] init];
 		[df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:[[NSLocale preferredLanguages] firstObject]]];
-		[df setDateFormat:@"ccc d"];
+		[df setDateFormat:self.dateFormatString];
 		
 		CGFloat h = 12;
 		
@@ -444,8 +444,16 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	SKColor *alternateTextColor = nil;
 
 	self.useMasking = NO;
+    self.dateFormatString = @"ccc d";
 	
 	switch (self.theme) {
+            
+        case ThemeGauge:
+        {
+            self.dateFormatString = @"d";
+            break;
+        }
+            
 		case ThemeHermesPink:
 		{
 			colorRegionColor = [SKColor colorWithRed:0.848 green:0.187 blue:0.349 alpha:1];

@@ -11,6 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef enum : NSUInteger {
+    ThemeGauge,
 	ThemeHermesPink,
 	ThemeHermesOrange,
 	ThemeNavy,
@@ -105,6 +106,7 @@ typedef enum : NSUInteger {
 @property BOOL useMasking;
 @property BOOL showDate;
 @property BOOL showCenterDisc;
+@property NSString *dateFormatString;
 
 @property CGSize faceSize;
 
