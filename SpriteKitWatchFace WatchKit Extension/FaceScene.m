@@ -750,7 +750,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     //attribs = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
     attribs = @{
                 NSFontAttributeName : [UIFont fontWithName:@"Jura-Bold" size:7],
-                NSForegroundColorAttributeName : [SKColor blackColor]
+                NSForegroundColorAttributeName : self.textColor
                 };
 #endif
 
@@ -1546,7 +1546,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
             //attribs = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
             attribs = @{
                         NSFontAttributeName : [UIFont fontWithName:@"Jura-Bold" size:7],
-                        NSForegroundColorAttributeName : [SKColor blackColor]
+                        NSForegroundColorAttributeName : self.textColor
                         };
 #endif
             labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
