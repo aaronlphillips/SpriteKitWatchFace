@@ -134,6 +134,7 @@ typedef enum : NSUInteger {
 @property BOOL useBackgroundImageOverlay;
 @property BOOL useMasking;
 @property BOOL showSecondhand;
+@property SKAction *secondHandAction;
 
 @property CGSize faceSize;
 

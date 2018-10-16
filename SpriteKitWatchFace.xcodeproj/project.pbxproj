@@ -37,6 +37,14 @@
 		B0F66DD72173727500058F22 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0F66DDB2173727500058F22 /* InfoPlist.strings */; };
 		B0F66DD82173727500058F22 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0F66DDB2173727500058F22 /* InfoPlist.strings */; };
 		B0F66DD92173727500058F22 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0F66DDB2173727500058F22 /* InfoPlist.strings */; };
+		F0D75D7121758D5C000DC661 /* Jura-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */; };
+		F0D75D7221758D5C000DC661 /* Jura-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */; };
+		F0D75D7321758D5C000DC661 /* Jura-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */; };
+		F0D75D7421758D5C000DC661 /* Jura-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */; };
+		F0D75D7521758D5C000DC661 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */; };
+		F0D75D7621758D5C000DC661 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */; };
+		F0D75D7721758D5C000DC661 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */; };
+		F0D75D7821758D5C000DC661 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +128,8 @@
 		B0EB7305216E6C380098CF27 /* FaceScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FaceScene.h; sourceTree = "<group>"; };
 		B0EB7306216E6C380098CF27 /* FaceScene.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FaceScene.m; sourceTree = "<group>"; };
 		B0F66DDA2173727500058F22 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Jura-Bold.ttf"; sourceTree = "<group>"; };
+		F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Jura-Regular.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +160,8 @@
 		B0D30AC7216D5B2500444765 = {
 			isa = PBXGroup;
 			children = (
+				F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */,
+				F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */,
 				B0EB72E3216E3C350098CF27 /* README.md */,
 				B0D30AD2216D5B2500444765 /* SpriteKitWatchFace */,
 				B0D30AEA216D5B2700444765 /* SpriteKitWatchFace WatchKit App */,
@@ -359,7 +371,9 @@
 				B0D30AE0216D5B2700444765 /* LaunchScreen.storyboard in Resources */,
 				B0F66DD72173727500058F22 /* InfoPlist.strings in Resources */,
 				B0DEB03D2172C6E00087FA94 /* FaceScene.sks in Resources */,
+				F0D75D7121758D5C000DC661 /* Jura-Bold.ttf in Resources */,
 				B0D30ADD216D5B2700444765 /* MobileAssets.xcassets in Resources */,
+				F0D75D7521758D5C000DC661 /* Jura-Regular.ttf in Resources */,
 				B0D30ADB216D5B2500444765 /* Main.storyboard in Resources */,
 				B0DEB03E2172C6E50087FA94 /* NanoAssets.xcassets in Resources */,
 			);
@@ -369,7 +383,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0D75D7621758D5C000DC661 /* Jura-Regular.ttf in Resources */,
 				B0D30AEF216D5B2700444765 /* NanoIconAssets.xcassets in Resources */,
+				F0D75D7221758D5C000DC661 /* Jura-Bold.ttf in Resources */,
 				B0F66DD82173727500058F22 /* InfoPlist.strings in Resources */,
 				B0D30AED216D5B2700444765 /* Interface.storyboard in Resources */,
 			);
@@ -380,7 +396,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B0D30B01216D5B2800444765 /* NanoAssets.xcassets in Resources */,
+				F0D75D7721758D5C000DC661 /* Jura-Regular.ttf in Resources */,
 				B0D30B14216D5C6A00444765 /* FaceScene.sks in Resources */,
+				F0D75D7321758D5C000DC661 /* Jura-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,6 +411,8 @@
 				B0EB7304216E69C40098CF27 /* NanoAssets.xcassets in Resources */,
 				B0EB7303216E69C00098CF27 /* FaceScene.sks in Resources */,
 				B0F66DD92173727500058F22 /* InfoPlist.strings in Resources */,
+				F0D75D7421758D5C000DC661 /* Jura-Bold.ttf in Resources */,
+				F0D75D7821758D5C000DC661 /* Jura-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
