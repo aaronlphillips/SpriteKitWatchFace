@@ -738,6 +738,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     NSAttributedString *minutesText = [[NSAttributedString alloc] initWithString:minutesString attributes:attribs];
     SKLabelNode *dTimeMinutes = [SKLabelNode labelNodeWithAttributedText:minutesText];
     dTimeMinutes.position = CGPointMake((h*sepMargin) - 0,y);
+    dTimeMinutes.name = @"Digital Time Minutes";
     [digitalClock addChild:dTimeMinutes];
     
     // AM/PM
@@ -1512,53 +1513,15 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         /* Update Digital Clock Time in the Middle */
         NSDateFormatter * df = [[NSDateFormatter alloc] init];
         SKCropNode *digitalClock = (SKCropNode *)[self childNodeWithName:@"DigitalClock"];
-
+        // may be a cleaner way to do this
         if(digitalClock != nil){
-            // NSDictionary *attribs = @{NSFontAttributeName : [[NSFont systemFontOfSize:dateFontSize weight:NSFontWeightMedium] smallCaps], NSForegroundColorAttributeName : self.textColor};
-            
-            CGFloat h = 50; // move to global var
-#if TARGET_OS_OSX
-            NSDictionary *attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Regular" size:h], NSForegroundColorAttributeName : self.textColor};
-#else
-            NSDictionary *attribs = @{
-                                      NSFontAttributeName : [UIFont fontWithName:@"Jura-Regular" size:h],
-                                      NSForegroundColorAttributeName : self.textColor
-                                      };
-#endif
-            SKLabelNode *dTimeHour = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Hour"];
-            [df setDateFormat:@"hh"];
-            NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
-            //dTimeHour.text = [[df stringFromDate:[NSDate date]] uppercaseString];
-            dTimeHour.attributedText = labelText;
-            
-            SKLabelNode *dTimeMinutes = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Minutes"];
-            [df setDateFormat:@"mm"];
-            labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
-            //dTimeMinutes.text = [[df stringFromDate:[NSDate date]] uppercaseString];
-            dTimeMinutes.attributedText = labelText;
-            
-            SKLabelNode *dTimeAMPM = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time AMPM"];
-            [df setDateFormat:@"a"];
-#if TARGET_OS_OSX
-            attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Bold" size:7], NSForegroundColorAttributeName : self.textColor};
-#else
-            //UIFont *font = [UIFont fontWithName:@"Jura-Bold" size:7];
-            //attribs = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
-            attribs = @{
-                        NSFontAttributeName : [UIFont fontWithName:@"Jura-Bold" size:7],
-                        NSForegroundColorAttributeName : self.textColor
-                        };
-#endif
-            labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
-            //dTimeAMPM.text = [[df stringFromDate:[NSDate date]] uppercaseString];
-            dTimeAMPM.attributedText = labelText;
-            
-            // Flashing Separator (maybe fade?)
-            SKLabelNode *dTimeSep = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Separator"];
-            if(components.second % 2 == 0){
-                dTimeSep.alpha = 0.0;
-            }else{
-                dTimeSep.alpha = 1.0;
+            [df setDateFormat:@"yyyy-MMM-dd hh:mm:ss a"];
+            NSString *nextDateString = [df stringFromDate:[NSDate date]];
+            if(![self.prevDateString isEqualToString: nextDateString]){
+                // different second in time (don't need to update the following with sub-second percision
+                [self updateGaugeDigitalClock:digitalClock : components];
+                //NSLog(@"update");
+                self.prevDateString = nextDateString;
             }
         }
         
@@ -1597,6 +1560,55 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		colorRegion.zRotation =  0;
 		colorRegionReflection.zRotation =  0;
 	}
+}
+
+-(void)updateGaugeDigitalClock:(SKCropNode *)digitalClock :(NSDateComponents *)components
+{
+    NSDateFormatter * df = [[NSDateFormatter alloc] init];
+    CGFloat h = 50; // move to global var
+#if TARGET_OS_OSX
+    NSDictionary *attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Regular" size:h], NSForegroundColorAttributeName : self.textColor};
+#else
+    NSDictionary *attribs = @{
+                              NSFontAttributeName : [UIFont fontWithName:@"Jura-Regular" size:h],
+                              NSForegroundColorAttributeName : self.textColor
+                              };
+#endif
+    SKLabelNode *dTimeHour = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Hour"];
+    [df setDateFormat:@"hh"];
+    NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
+    //dTimeHour.text = [[df stringFromDate:[NSDate date]] uppercaseString];
+    dTimeHour.attributedText = labelText;
+    
+    SKLabelNode *dTimeMinutes = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Minutes"];
+    [df setDateFormat:@"mm"];
+    labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
+    //dTimeMinutes.text = [[df stringFromDate:[NSDate date]] uppercaseString];
+    dTimeMinutes.attributedText = labelText;
+    
+    SKLabelNode *dTimeAMPM = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time AMPM"];
+    [df setDateFormat:@"a"];
+#if TARGET_OS_OSX
+    attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Bold" size:7], NSForegroundColorAttributeName : self.textColor};
+#else
+    //UIFont *font = [UIFont fontWithName:@"Jura-Bold" size:7];
+    //attribs = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
+    attribs = @{
+                NSFontAttributeName : [UIFont fontWithName:@"Jura-Bold" size:7],
+                NSForegroundColorAttributeName : self.textColor
+                };
+#endif
+    labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
+    //dTimeAMPM.text = [[df stringFromDate:[NSDate date]] uppercaseString];
+    dTimeAMPM.attributedText = labelText;
+    
+    // Flashing Separator (maybe fade?)
+    SKLabelNode *dTimeSep = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Separator"];
+    if(components.second % 2 == 0){
+        dTimeSep.alpha = 0.0;
+    }else{
+        dTimeSep.alpha = 1.0;
+    }
 }
 
 -(void)refreshTheme

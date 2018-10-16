@@ -135,6 +135,7 @@ typedef enum : NSUInteger {
 @property BOOL useMasking;
 @property BOOL showSecondhand;
 @property SKAction *secondHandAction;
+@property NSString *prevDateString; // second resolution cachebuster for perf
 
 @property CGSize faceSize;
 
