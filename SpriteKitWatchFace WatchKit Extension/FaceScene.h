@@ -131,11 +131,15 @@ typedef enum : NSUInteger {
 @property SKColor *alternateMinorMarkColor;
 @property SKColor *alternateTextColor;
 
+@property NSString *monogram;
+
 @property BOOL useBackgroundImageOverlay;
 @property BOOL useMasking;
 @property BOOL showSecondhand;
 @property SKAction *secondHandAction;
 @property NSString *prevDateString; // second resolution cachebuster for perf
+
+@property BOOL showLogo;
 
 @property CGSize faceSize;
 

@@ -121,7 +121,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		
 		self.dateStyle = DateStyleDayDate;
 		self.dateQuadrant = DateQuadrantRight;
-        
+		self.monogram = @""; // e.g. 
+		
 		[self refreshTheme];
 		
 		NSLog(@"Permutations per theme = %lu", FaceStyleMAX*NumeralStyleMAX*TickmarkStyleMAX*(TickmarkShapeMAX*2)*ColorRegionStyleMAX*DateStyleMAX*CenterDiscStyleMAX*DateQuadrantMAX);
@@ -314,6 +315,11 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		
 		[faceMarkings addChild:numberLabel];
 	}
+    
+    if (self.monogram)
+    {
+        [faceMarkings addChild:[self setupMonogramWithFontSize:16 verticalOffset:24]];
+    }
 
 	[self addChild:faceMarkings];
 }
@@ -523,6 +529,11 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 
 		[faceMarkings addChild:numberLabel];
 	}
+    
+    if (self.monogram)
+    {
+        [faceMarkings addChild:[self setupMonogramWithFontSize:18 verticalOffset:32]];
+    }
 	
 	[self addChild:faceMarkings];
 }
@@ -798,6 +809,19 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
             }
         }
 	}
+}
+
+- (SKLabelNode *)setupMonogramWithFontSize:(CGFloat)size verticalOffset:(CGFloat)offset {
+    NSDictionary *attribs = @{NSFontAttributeName : [NSFont systemFontOfSize:size weight:NSFontWeightMedium], NSForegroundColorAttributeName : self.textColor};
+    
+    NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:
+                                     ![self.monogram isEqual: @""]? self.monogram : @" " // Empty labels trigger NSMutableRLEArray crashes, at least in the desktop shim, so we make it a space.
+                                                                    attributes:attribs];
+    
+    SKLabelNode *monogramLabel = [SKLabelNode labelNodeWithAttributedText:labelText];
+    monogramLabel.position = CGPointMake(0, offset);
+    
+    return monogramLabel;
 }
 
 #pragma mark -
