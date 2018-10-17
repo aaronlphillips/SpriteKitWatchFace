@@ -45,6 +45,10 @@
 		F0D75D7621758D5C000DC661 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */; };
 		F0D75D7721758D5C000DC661 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */; };
 		F0D75D7821758D5C000DC661 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */; };
+		F0D75D7D2176858B000DC661 /* Headers in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7C2176858B000DC661 /* Headers */; };
+		F0D75D7E2176858B000DC661 /* Headers in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7C2176858B000DC661 /* Headers */; };
+		F0D75D7F2176858B000DC661 /* Headers in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7C2176858B000DC661 /* Headers */; };
+		F0D75D802176858B000DC661 /* Headers in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7C2176858B000DC661 /* Headers */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,6 +134,8 @@
 		B0F66DDA2173727500058F22 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Jura-Bold.ttf"; sourceTree = "<group>"; };
 		F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Jura-Regular.ttf"; sourceTree = "<group>"; };
+		F0D75D7A217684B7000DC661 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
+		F0D75D7C2176858B000DC661 /* Headers */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Headers; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +166,7 @@
 		B0D30AC7216D5B2500444765 = {
 			isa = PBXGroup;
 			children = (
+				F0D75D7C2176858B000DC661 /* Headers */,
 				F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */,
 				F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */,
 				B0EB72E3216E3C350098CF27 /* README.md */,
@@ -168,6 +175,7 @@
 				B0D30AF9216D5B2700444765 /* SpriteKitWatchFace WatchKit Extension */,
 				B0EB72E9216E69AA0098CF27 /* DesktopShim */,
 				B0D30AD1216D5B2500444765 /* Products */,
+				F0D75D79217684B6000DC661 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -241,6 +249,14 @@
 				B0EB72FF216E69AB0098CF27 /* DesktopShim.entitlements */,
 			);
 			path = DesktopShim;
+			sourceTree = "<group>";
+		};
+		F0D75D79217684B6000DC661 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F0D75D7A217684B7000DC661 /* IOKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -371,6 +387,7 @@
 				B0D30AE0216D5B2700444765 /* LaunchScreen.storyboard in Resources */,
 				B0F66DD72173727500058F22 /* InfoPlist.strings in Resources */,
 				B0DEB03D2172C6E00087FA94 /* FaceScene.sks in Resources */,
+				F0D75D7D2176858B000DC661 /* Headers in Resources */,
 				F0D75D7121758D5C000DC661 /* Jura-Bold.ttf in Resources */,
 				B0D30ADD216D5B2700444765 /* MobileAssets.xcassets in Resources */,
 				F0D75D7521758D5C000DC661 /* Jura-Regular.ttf in Resources */,
@@ -386,6 +403,7 @@
 				F0D75D7621758D5C000DC661 /* Jura-Regular.ttf in Resources */,
 				B0D30AEF216D5B2700444765 /* NanoIconAssets.xcassets in Resources */,
 				F0D75D7221758D5C000DC661 /* Jura-Bold.ttf in Resources */,
+				F0D75D7E2176858B000DC661 /* Headers in Resources */,
 				B0F66DD82173727500058F22 /* InfoPlist.strings in Resources */,
 				B0D30AED216D5B2700444765 /* Interface.storyboard in Resources */,
 			);
@@ -396,6 +414,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B0D30B01216D5B2800444765 /* NanoAssets.xcassets in Resources */,
+				F0D75D7F2176858B000DC661 /* Headers in Resources */,
 				F0D75D7721758D5C000DC661 /* Jura-Regular.ttf in Resources */,
 				B0D30B14216D5C6A00444765 /* FaceScene.sks in Resources */,
 				F0D75D7321758D5C000DC661 /* Jura-Bold.ttf in Resources */,
@@ -409,6 +428,7 @@
 				B0EB72F8216E69AB0098CF27 /* DesktopAssets.xcassets in Resources */,
 				B0EB72FB216E69AB0098CF27 /* Main.storyboard in Resources */,
 				B0EB7304216E69C40098CF27 /* NanoAssets.xcassets in Resources */,
+				F0D75D802176858B000DC661 /* Headers in Resources */,
 				B0EB7303216E69C00098CF27 /* FaceScene.sks in Resources */,
 				B0F66DD92173727500058F22 /* InfoPlist.strings in Resources */,
 				F0D75D7421758D5C000DC661 /* Jura-Bold.ttf in Resources */,
@@ -619,6 +639,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -672,6 +693,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -686,6 +708,10 @@
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = L927FYCRGJ;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/Headers/",
+					"$(SRCROOT)/Headers/IOKit",
+				);
 				INFOPLIST_FILE = "SpriteKitWatchFace WatchKit Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -707,6 +733,10 @@
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = L927FYCRGJ;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/Headers/",
+					"$(SRCROOT)/Headers/IOKit",
+				);
 				INFOPLIST_FILE = "SpriteKitWatchFace WatchKit Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

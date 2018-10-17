@@ -61,6 +61,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	}
 	
 	workingRadius = smallestT;
+    
+    NSLog(@"Working Radius For FaceSize: %f, %f, %f, %f", faceWidth, faceHeight, angle, workingRadius);
 	
 	return workingRadius;
 }
@@ -81,8 +83,28 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 {
 	self = [super initWithCoder:coder];
 	if (self) {
-		
-		self.faceSize = (CGSize){184, 224};
+        
+        // Debug print available fonts
+#if TARGET_OS_OSX
+        //NSLog(@"%@",[[[NSFontManager sharedFontManager] availableFontFamilies] description]);
+#else
+        //    NSArray *fontFamilies = [UIFont familyNames];
+        //
+        //    for (int i = 0; i < [fontFamilies count]; i++)
+        //    {
+        //        NSString *fontFamily = [fontFamilies objectAtIndex:i];
+        //        NSArray *fontNames = [UIFont fontNamesForFamilyName:[fontFamilies objectAtIndex:i]];
+        //        NSLog (@"%@: %@", fontFamily, fontNames);
+        //    }
+#endif
+        
+        //WKInterfaceDevice *currentDevice = [WKInterfaceDevice currentDevice];
+        //CGRect bounds = currentDevice.screenBounds;
+        // 38mm: (136.0, 170.0)
+        // 42mm: (56.0, 195.0)
+        // 44mm: (184.0, 224.0))
+		//self.faceSize = (CGSize){bounds.size.width, bounds.size.height};
+        self.faceSize = (CGSize){184, 224};
 
         self.theme = [[NSUserDefaults standardUserDefaults] integerForKey:@"Theme"];
 		self.useBackgroundImageOverlay = NO;
@@ -513,24 +535,9 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     SKCropNode *faceMarkings = [SKCropNode node];
     faceMarkings.name = layerName;
     
-    /* Hardcoded for 44mm Apple Watch */
-    
     CGFloat shortTickWidth = 1;
     CGFloat shortTickHeight = 0;
     CGFloat shortTickScale = 1;
-    
-#if TARGET_OS_OSX
-    //NSLog(@"%@",[[[NSFontManager sharedFontManager] availableFontFamilies] description]);
-#else
-//    NSArray *fontFamilies = [UIFont familyNames];
-//
-//    for (int i = 0; i < [fontFamilies count]; i++)
-//    {
-//        NSString *fontFamily = [fontFamilies objectAtIndex:i];
-//        NSArray *fontNames = [UIFont fontNamesForFamilyName:[fontFamilies objectAtIndex:i]];
-//        NSLog (@"%@: %@", fontFamily, fontNames);
-//    }
-#endif
     
     /* Minutes (bottom half) */
     for (int i = 60; i >= 0; i--)
@@ -581,15 +588,11 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         CGFloat extraY = 0;
         CGFloat extraX = 0;
         
-#if TARGET_OS_OSX
-        NSDictionary *attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Regular" size:h], NSForegroundColorAttributeName : self.textColor};
-#else
         NSDictionary *attribs = @{
-                                  NSFontAttributeName : [UIFont fontWithName:@"Jura-Regular" size:h],
+                                  NSFontAttributeName : [NSFont fontWithName:@"Jura-Regular" size:h],
                                   NSForegroundColorAttributeName : self.textColor
                                   };
-#endif
-        
+
         if(i % 10 == 0){
             labelMargin = 3;
             
@@ -612,6 +615,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
             [faceMarkings addChild:numberLabel];
         }
     }
+    
+    //NSLog(@"faceSize %f %f", self.faceSize.width, self.faceSize.height);
     
     /* Hours (top half) */
     CGFloat workingRadius = self.faceSize.width/2;
@@ -665,14 +670,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
                 labelName = @"GaugeDate";
             }
             
-#if TARGET_OS_OSX
-            NSDictionary *attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Regular" size:h], NSForegroundColorAttributeName : self.textColor};
-#else
-            NSDictionary *attribs = @{
-                                      NSFontAttributeName : [UIFont fontWithName:@"Jura-Regular" size:h],
-                                      NSForegroundColorAttributeName : self.textColor
-                                      };
-#endif
+            NSDictionary *attribs = @{NSFontAttributeName : [NSFont fontWithName:fontName size:h], NSForegroundColorAttributeName : self.textColor};
             NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:labelString attributes:attribs];
             
             SKLabelNode *numberLabel = [SKLabelNode labelNodeWithAttributedText:labelText];
@@ -704,14 +702,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     CGFloat y = -((h / 2)-8);
     CGFloat sepMargin = 0.7;
     
-#if TARGET_OS_OSX
     NSDictionary *attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Regular" size:h], NSForegroundColorAttributeName : self.textColor};
-#else
-    NSDictionary *attribs = @{
-                              NSFontAttributeName : [UIFont fontWithName:@"Jura-Regular" size:h],
-                              NSForegroundColorAttributeName : self.textColor
-                              };
-#endif
+
     NSDateFormatter * df = [[NSDateFormatter alloc] init];
     [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:[[NSLocale preferredLanguages] firstObject]]];
     
@@ -744,16 +736,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     // AM/PM
     [df setDateFormat:@"a"];
 
-#if TARGET_OS_OSX
     attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Bold" size:7], NSForegroundColorAttributeName : self.textColor};
-#else
-    //UIFont *font = [UIFont fontWithName:@"Jura-Bold" size:7];
-    //attribs = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
-    attribs = @{
-                NSFontAttributeName : [UIFont fontWithName:@"Jura-Bold" size:7],
-                NSForegroundColorAttributeName : self.textColor
-                };
-#endif
 
     NSString *ampmString = [[df stringFromDate:[NSDate date]] uppercaseString];
     NSAttributedString *ampmText = [[NSAttributedString alloc] initWithString:ampmString attributes:attribs];
@@ -804,18 +787,10 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         if (self.faceStyle == FaceStyleGauge){
             SKLabelNode *dateLabelC = (SKLabelNode *)[[self childNodeWithName:@"Markings"] childNodeWithName:@"GaugeDate"];
             if(dateLabelC != nil){
-                // attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Bold" size:7], NSForegroundColorAttributeName : [SKColor blackColor]};
-#if TARGET_OS_OSX
                 attribs = @{
                             NSFontAttributeName : [NSFont fontWithName:@"Jura-Bold" size:7],
                             NSForegroundColorAttributeName : [SKColor blackColor]
                             };
-#else
-                attribs = @{
-                                          NSFontAttributeName : [UIFont fontWithName:@"Jura-Regular" size:7],
-                                          NSForegroundColorAttributeName : [SKColor blackColor]
-                                          };
-#endif
                 [df setDateFormat:@"d"];
                 labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
                 dateLabelC.attributedText = labelText;
@@ -849,39 +824,23 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     SKNode *hourHand = [face childNodeWithName:@"Hours"];
     SKNode *minuteHand = [face childNodeWithName:@"Minutes"];
     SKNode *secondHand = [face childNodeWithName:@"Seconds"];
+    SKSpriteNode *staticImageLayer = (SKSpriteNode *)[[face childNodeWithName:@"Image Root"] childNodeWithName:@"Static Image Layer"];
     
     SKNode *imageRoot = [face childNodeWithName:@"Image Root"];
     imageRoot.zPosition = 0.0;
     
-    SKSpriteNode *minuteHandSprite = (SKSpriteNode*)[face childNodeWithName:@"Minutes"];
-    minuteHandSprite.texture = [SKTexture textureWithImageNamed:@"Minute_Hand_vert-regular"];
-    SKNode *minuteHandInlay = [minuteHand childNodeWithName:@"Minutes Inlay"];
-    minuteHandInlay.alpha = 1.0;
-    SKNode *minuteHandShadow = [minuteHand childNodeWithName:@"Minutes Shadow"];
-    minuteHandShadow.alpha = 1.0;
-    
-    SKSpriteNode *hourHandSprite = (SKSpriteNode*)[face childNodeWithName:@"Hours"];
-    hourHandSprite.texture = [SKTexture textureWithImageNamed:@"Hour_Hand_vert-regular"];
-    SKNode *hourHandInlay = [hourHand childNodeWithName:@"Hours Inlay"];
-    hourHandInlay.alpha = 1.0;
-    SKNode *hourHandShadow = [hourHand childNodeWithName:@"Hours Shadow"];
-    hourHandShadow.alpha = 1.0;
-    
-    SKSpriteNode *secondHandSprite = (SKSpriteNode*)[face childNodeWithName:@"Seconds"];
-    //secondHandSprite.texture = [SKTexture textureWithImageNamed:@"Hour_Hand_vert-regular"];
-    SKNode *secondHandShadow = [secondHand childNodeWithName:@"Seconds Shadow"];
-    secondHandShadow.alpha = 1.0;
-    
-    SKSpriteNode *staticImageLayer = (SKSpriteNode *)[[face childNodeWithName:@"Image Root"] childNodeWithName:@"Static Image Layer"];
-    staticImageLayer.color = self.textColor;
-    staticImageLayer.blendMode = SKBlendModeScreen;
-    staticImageLayer.colorBlendFactor = 1.0;
-    staticImageLayer.texture = [SKTexture textureWithImageNamed:@"S4Numbers"];
+    SKNode *gaugeFace = [self childNodeWithName:@"GaugeFace"];
+
+    face.alpha = 1;
+    gaugeFace.alpha = 0;
     
     NSLog(@"Using Theme = %lu", self.theme);
     
-    self.useBackgroundImageOverlay = NO;
-    self.faceStyle = FaceStyleRound; // TODO revert to some default elsewhere when not using GaugeFace
+    // TODO: track what the options were BEFORE we switched to gauge face
+    // so we can revert when switching AWAY from gauge face
+    self.faceStyle = FaceStyleRound;
+    self.tickmarkStyle = TickmarkStyleAll;
+    self.numeralStyle = NumeralStyleAll;
 	
 	switch (self.theme) {
             
@@ -896,30 +855,23 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
             textColor = [SKColor whiteColor];
             secondHandColor = [SKColor redColor]; //inlayColor; //majorMarkColor;
             
-            minuteHandShadow.alpha = 0;
+            // Hide Other Face Group
+            face.alpha = 0;
+//            secondHand.alpha = 0;
+//            minuteHand.alpha = 0;
+//            hourHand.alpha = 0;
             
-            staticImageLayer.color = [SKColor clearColor];
-            staticImageLayer.colorBlendFactor = 0.0;
-            staticImageLayer.blendMode = SKBlendModeAlpha;
-            staticImageLayer.texture = [SKTexture textureWithImageNamed:@"Gauge_Face_Overlay2"];
+            // Show Our Gauge Face Sprite Group
+            SKSpriteNode *gaugeFaceSprite = (SKSpriteNode*)gaugeFace; //[self childNodeWithName:@"GaugeFace"];
+            gaugeFace.alpha = 1;
             
-            secondHandShadow.alpha = 0.0;
-            
-            minuteHandSprite.texture = [SKTexture textureWithImageNamed:@"gauge-minute-hand"];
-            minuteHandSprite.size = CGSizeMake(15, 151);
-            minuteHandSprite.xScale = 0.8;
-            minuteHandSprite.yScale = 0.8;
-            minuteHandInlay.alpha = 0.0;
-            minuteHandShadow.alpha = 0.0;
-            
-            hourHandSprite.texture = [SKTexture textureWithImageNamed:@"gauge-hour-hand"];
-            hourHandSprite.size = CGSizeMake(17.5, 148);
-            hourHandSprite.xScale = 0.8;
-            hourHandSprite.yScale = 0.8;
-            hourHandInlay.alpha = 0.0;
-            hourHandShadow.alpha = 0.0;
-            
-            self.useBackgroundImageOverlay = YES;
+            SKNode *gaugeOverlay = [gaugeFace childNodeWithName:@"Overlay"];
+            SKNode *gaugeHourHand = [gaugeFace childNodeWithName:@"Hours"];
+            SKNode *gaugeMinutesHand = [gaugeFace childNodeWithName:@"Minutes"];
+            SKNode *gaugeSecondsHand = [gaugeFace childNodeWithName:@"Seconds"];
+
+            SKSpriteNode *gaugeOverlaySprite = (SKSpriteNode*)[gaugeFace childNodeWithName:@"Overlay"];
+            gaugeOverlaySprite.size = CGSizeMake(184, 224);
             
             self.faceStyle = FaceStyleGauge;
             self.showSecondhand = YES;
@@ -931,13 +883,6 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
             self.minorTickmarkShape = TickmarkShapeRectangular;
             
             self.numeralStyle = NumeralStyleGuage;
-            
-            hourHand.zPosition = 1.0;
-            minuteHand.zPosition = 1.0;
-            secondHand.zPosition = 1.0;
-            imageRoot.zPosition = 3.0;
-            
-            secondHandSprite.yScale = 0.61;
             
             break;
         }
@@ -1523,6 +1468,14 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
                 //NSLog(@"update");
                 self.prevDateString = nextDateString;
             }
+            // Flashing Separator (maybe fade?)
+            // Moved outside of the string comparison, because it seemed to skip some updates when it was in there
+            SKLabelNode *dTimeSep = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Separator"];
+            if(components.second % 2 == 0){
+                dTimeSep.alpha = 0.0;
+            }else{
+                dTimeSep.alpha = 1.0;
+            }
         }
         
     } else {
@@ -1566,14 +1519,9 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 {
     NSDateFormatter * df = [[NSDateFormatter alloc] init];
     CGFloat h = 50; // move to global var
-#if TARGET_OS_OSX
+
     NSDictionary *attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Regular" size:h], NSForegroundColorAttributeName : self.textColor};
-#else
-    NSDictionary *attribs = @{
-                              NSFontAttributeName : [UIFont fontWithName:@"Jura-Regular" size:h],
-                              NSForegroundColorAttributeName : self.textColor
-                              };
-#endif
+
     SKLabelNode *dTimeHour = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Hour"];
     [df setDateFormat:@"hh"];
     NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
@@ -1588,27 +1536,12 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     
     SKLabelNode *dTimeAMPM = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time AMPM"];
     [df setDateFormat:@"a"];
-#if TARGET_OS_OSX
+
     attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Bold" size:7], NSForegroundColorAttributeName : self.textColor};
-#else
-    //UIFont *font = [UIFont fontWithName:@"Jura-Bold" size:7];
-    //attribs = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
-    attribs = @{
-                NSFontAttributeName : [UIFont fontWithName:@"Jura-Bold" size:7],
-                NSForegroundColorAttributeName : self.textColor
-                };
-#endif
+
     labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
     //dTimeAMPM.text = [[df stringFromDate:[NSDate date]] uppercaseString];
     dTimeAMPM.attributedText = labelText;
-    
-    // Flashing Separator (maybe fade?)
-    SKLabelNode *dTimeSep = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Separator"];
-    if(components.second % 2 == 0){
-        dTimeSep.alpha = 0.0;
-    }else{
-        dTimeSep.alpha = 1.0;
-    }
 }
 
 -(void)refreshTheme

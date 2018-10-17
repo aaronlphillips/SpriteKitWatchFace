@@ -35,9 +35,18 @@
 	CGSize currentDeviceSize = [WKInterfaceDevice currentDevice].screenBounds.size;
 	
 	/* Using the 44mm Apple Watch as the base size, scale down to fit */
-	scene.camera.xScale = (184.0/currentDeviceSize.width);
-	scene.camera.yScale = (184.0/currentDeviceSize.width);
+    scene.camera.xScale = 184.0/currentDeviceSize.width;
+    scene.camera.yScale = 184.0/currentDeviceSize.width;
+    NSLog(@"curr device size %f %f", currentDeviceSize.width, currentDeviceSize.height);
+    NSLog(@"scene camera scale %f", (184.0/currentDeviceSize.width));
+    NSLog(@"cam frame size %f %f", scene.camera.frame.size.width, scene.camera.frame.size.height);
+    NSLog(@"cam position %f %f", scene.camera.position.x, scene.camera.position.y);
+    NSLog(@"scene size %f %f", scene.size.width, scene.size.height);
 	
+    scene.size = CGSizeMake(184, 224); // default to 44mm (why is it defaulting to 154.000000 174.000000 ?)
+    
+    NSLog(@"scene size %f %f", scene.size.width, scene.size.height);
+    
 	[self.scene presentScene:scene];
 }
 
