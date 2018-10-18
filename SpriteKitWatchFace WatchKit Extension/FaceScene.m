@@ -135,7 +135,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		
 		self.dateStyle = DateStyleDayDate;
 		self.dateQuadrant = DateQuadrantRight;
-		self.monogram = @""; // e.g. 
+		self.monogram = @"☕"; // e.g. 
 		
 		[self refreshTheme];
 		
@@ -666,16 +666,13 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         if(i % 3 == 0){
             // cardinal, add hour number label instead of tick
             
-            CGFloat h = 12;
+            CGFloat h = 14;
             CGFloat extraY = 0;
             CGFloat extraX = 0;
             
             NSString *labelString = [NSString stringWithFormat:@"%i", i == 0 ? 12 : i];
             NSString *fontName = @"Jura-Regular";
             
-            if(i == 0){ // || i == 12){
-                //labelMargin = 8;
-            }
             CGFloat fontSize = h;
             
             if(i == 0){
@@ -683,20 +680,20 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
                 /* Date BG Circle */
                 SKSpriteNode *gDateBGDot = [SKSpriteNode spriteNodeWithImageNamed:@"Gauge_DateBG"];
                 [faceMarkings addChild:gDateBGDot];
-                gDateBGDot.position = CGPointMake(-workingRadius + 19.5, 39);
+                gDateBGDot.position = CGPointMake(-workingRadius + 20, 39);
                 //gDateBGDot.position = CGPointMake(-workingRadius + labelMargin + 16, 41);
                 gDateBGDot.zPosition = 1;
-                gDateBGDot.yScale = gDateBGDot.xScale = 0.5;
-                
-                h = 7;
-                
+                gDateBGDot.yScale = gDateBGDot.xScale = 0.66;
+                gDateBGDot.color = self.textColor;
+                gDateBGDot.colorBlendFactor = 1.0;
+
                 NSDateFormatter * df = [[NSDateFormatter alloc] init];
                 [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:[[NSLocale preferredLanguages] firstObject]]];
                 [df setDateFormat:@"d"];
                 labelString = [[df stringFromDate:[NSDate date]] uppercaseString];
                 labelColor = self.alternateTextColor; //[SKColor blackColor];
                 //NSLog(@"0th date text: %@", labelString);
-                fontSize = 14;
+                fontSize = 12;
                 fontName = @"Jura-Bold";
                 labelName = @"GaugeDate";
             }
@@ -928,14 +925,10 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         if (self.faceStyle == FaceStyleGauge){
             SKLabelNode *dateLabelC = (SKLabelNode *)[[[self childNodeWithName:@"GaugeFace"] childNodeWithName:@"Markings"] childNodeWithName:@"GaugeDate"];
             if(dateLabelC != nil){
-                attribs = @{
-                            NSFontAttributeName : [NSFont fontWithName:@"Jura-Bold" size:7],
-                            NSForegroundColorAttributeName : self.alternateTextColor //[SKColor blackColor]
-                            };
                 [df setDateFormat:@"d"];
-                labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
-                dateLabelC.attributedText = labelText;
-                //NSLog(@"updateDate %@", labelText);
+                // update without losing other attributes / needing to reinit all the properties in two places
+                NSDictionary *attributes = [(NSAttributedString *)dateLabelC.attributedText attributesAtIndex:0 effectiveRange:NULL];
+                dateLabelC.attributedText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attributes];
             }
         }
 	}

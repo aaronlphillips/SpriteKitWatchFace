@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpriteKitWatchFace WatchKit Extension/FaceScene.m"
-            timestampString = "561516216.363585"
+            timestampString = "561521323.88919"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "704"
-            endingLineNumber = "704"
+            startingLineNumber = "701"
+            endingLineNumber = "701"
             landmarkName = "-setupTickmarksForGaugeFaceWithLayerName:"
             landmarkType = "7">
          </BreakpointContent>
