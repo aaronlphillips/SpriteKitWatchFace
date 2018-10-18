@@ -11,7 +11,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef enum : NSUInteger {
-    ThemeGauge,
 	ThemeHermesPink,
 	ThemeHermesOrange,
 	ThemeNavy,
@@ -36,15 +35,15 @@ typedef enum : NSUInteger {
 	ThemeMarques,
 	ThemeVox,
 	ThemeSummer,
-	ThemeMAX
+    ThemeSpan,
+	ThemeMAX,
 } Theme;
 
 typedef enum : NSUInteger {
 	NumeralStyleAll,
 	NumeralStyleCardinal,
 	NumeralStyleNone,
-	NumeralStyleMAX,
-    NumeralStyleGuage
+	NumeralStyleMAX
 } NumeralStyle;
 
 typedef enum : NSUInteger {
@@ -53,15 +52,14 @@ typedef enum : NSUInteger {
 	TickmarkStyleMinor,
 	TickmarkStyleStackMajor,
 	TickmarkStyleNone,
-	TickmarkStyleMAX,
-    TickmarkStyleGauge
+	TickmarkStyleMAX
 } TickmarkStyle;
 
 typedef enum : NSUInteger {
 	FaceStyleRound,
 	FaceStyleRectangular,
-	FaceStyleMAX,
-    FaceStyleGauge
+    FaceStyleGauge,
+	FaceStyleMAX
 } FaceStyle;
 
 typedef enum : NSUInteger {
@@ -138,6 +136,7 @@ typedef enum : NSUInteger {
 @property BOOL showSecondhand;
 @property SKAction *secondHandAction;
 @property NSString *prevDateString; // second resolution cachebuster for perf
+@property CGFloat gaugeFaceWindowAngleFactor;
 
 @property BOOL showLogo;
 

@@ -36,16 +36,11 @@
 	
 	/* Using the 44mm Apple Watch as the base size, scale down to fit */
     scene.camera.xScale = 184.0/currentDeviceSize.width;
-    scene.camera.yScale = 184.0/currentDeviceSize.width;
-    NSLog(@"curr device size %f %f", currentDeviceSize.width, currentDeviceSize.height);
-    NSLog(@"scene camera scale %f", (184.0/currentDeviceSize.width));
-    NSLog(@"cam frame size %f %f", scene.camera.frame.size.width, scene.camera.frame.size.height);
-    NSLog(@"cam position %f %f", scene.camera.position.x, scene.camera.position.y);
-    NSLog(@"scene size %f %f", scene.size.width, scene.size.height);
+    scene.camera.yScale = 224.0/currentDeviceSize.height; // 184.0/currentDeviceSize.width
 	
-    scene.size = CGSizeMake(184, 224); // default to 44mm (why is it defaulting to 154.000000 174.000000 ?)
+    //scene.size = CGSizeMake(184, 224); // default to 44mm (why is it defaulting to 154 174 ?)
     
-    NSLog(@"scene size %f %f", scene.size.width, scene.size.height);
+    //NSLog(@"scene size %f %f", scene.size.width, scene.size.height);
     
 	[self.scene presentScene:scene];
 }
@@ -92,10 +87,21 @@ CGFloat totalRotation = 0;
 	{
 		FaceScene *scene = (FaceScene *)self.scene.scene;
 		
-		if ((scene.theme+direction > 0) && (scene.theme+direction < ThemeMAX))
-			scene.theme += direction;
-		else
-			scene.theme = 0;
+        if(scene.theme == 0 && direction == -1){
+            scene.theme = ThemeMAX - 1;
+        }else{
+            if ((scene.theme+direction > 0) && (scene.theme+direction < ThemeMAX))
+                scene.theme += direction;
+            else
+                scene.theme = 0;
+        }
+        
+        if((int)scene.scaleMode == (int)SKSceneScaleModeResizeFill){
+            scene.scaleMode = SKSceneScaleModeFill;
+        }else{
+            scene.scaleMode = (SKSceneScaleMode)((int)scene.scaleMode+1);
+        }
+        NSLog(@"scalemode %d", (int)scene.scaleMode);
 		
 		[scene refreshTheme];
 		

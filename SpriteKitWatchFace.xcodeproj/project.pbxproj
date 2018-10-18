@@ -37,18 +37,17 @@
 		B0F66DD72173727500058F22 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0F66DDB2173727500058F22 /* InfoPlist.strings */; };
 		B0F66DD82173727500058F22 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0F66DDB2173727500058F22 /* InfoPlist.strings */; };
 		B0F66DD92173727500058F22 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0F66DDB2173727500058F22 /* InfoPlist.strings */; };
-		F0D75D7121758D5C000DC661 /* Jura-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */; };
-		F0D75D7221758D5C000DC661 /* Jura-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */; };
-		F0D75D7321758D5C000DC661 /* Jura-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */; };
-		F0D75D7421758D5C000DC661 /* Jura-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */; };
-		F0D75D7521758D5C000DC661 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */; };
-		F0D75D7621758D5C000DC661 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */; };
-		F0D75D7721758D5C000DC661 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */; };
-		F0D75D7821758D5C000DC661 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */; };
-		F0D75D7D2176858B000DC661 /* Headers in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7C2176858B000DC661 /* Headers */; };
-		F0D75D7E2176858B000DC661 /* Headers in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7C2176858B000DC661 /* Headers */; };
-		F0D75D7F2176858B000DC661 /* Headers in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7C2176858B000DC661 /* Headers */; };
-		F0D75D802176858B000DC661 /* Headers in Resources */ = {isa = PBXBuildFile; fileRef = F0D75D7C2176858B000DC661 /* Headers */; };
+		F0F7B7D72177C45C008DF462 /* ShadowLabelNode.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F7B7D62177C45B008DF462 /* ShadowLabelNode.m */; };
+		F0F7B7D82177C45C008DF462 /* ShadowLabelNode.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F7B7D62177C45B008DF462 /* ShadowLabelNode.m */; };
+		F0F7B7D92177C45C008DF462 /* ShadowLabelNode.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F7B7D62177C45B008DF462 /* ShadowLabelNode.m */; };
+		F0F7B7E121780550008DF462 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0F7B7DF2178054F008DF462 /* Jura-Regular.ttf */; };
+		F0F7B7E221780550008DF462 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0F7B7DF2178054F008DF462 /* Jura-Regular.ttf */; };
+		F0F7B7E321780550008DF462 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0F7B7DF2178054F008DF462 /* Jura-Regular.ttf */; };
+		F0F7B7E421780550008DF462 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0F7B7DF2178054F008DF462 /* Jura-Regular.ttf */; };
+		F0F7B7E521780550008DF462 /* Jura-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0F7B7E02178054F008DF462 /* Jura-Bold.ttf */; };
+		F0F7B7E621780550008DF462 /* Jura-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0F7B7E02178054F008DF462 /* Jura-Bold.ttf */; };
+		F0F7B7E721780550008DF462 /* Jura-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0F7B7E02178054F008DF462 /* Jura-Bold.ttf */; };
+		F0F7B7E821780550008DF462 /* Jura-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0F7B7E02178054F008DF462 /* Jura-Bold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,10 +131,11 @@
 		B0EB7305216E6C380098CF27 /* FaceScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FaceScene.h; sourceTree = "<group>"; };
 		B0EB7306216E6C380098CF27 /* FaceScene.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FaceScene.m; sourceTree = "<group>"; };
 		B0F66DDA2173727500058F22 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Jura-Bold.ttf"; sourceTree = "<group>"; };
-		F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Jura-Regular.ttf"; sourceTree = "<group>"; };
 		F0D75D7A217684B7000DC661 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
-		F0D75D7C2176858B000DC661 /* Headers */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Headers; sourceTree = "<group>"; };
+		F0F7B7D52177C43D008DF462 /* ShadowLabelNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShadowLabelNode.h; sourceTree = "<group>"; };
+		F0F7B7D62177C45B008DF462 /* ShadowLabelNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShadowLabelNode.m; sourceTree = "<group>"; };
+		F0F7B7DF2178054F008DF462 /* Jura-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Jura-Regular.ttf"; path = "../../../Downloads/Jura/Jura-Regular.ttf"; sourceTree = "<group>"; };
+		F0F7B7E02178054F008DF462 /* Jura-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Jura-Bold.ttf"; path = "../../../Downloads/Jura/Jura-Bold.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,9 +166,8 @@
 		B0D30AC7216D5B2500444765 = {
 			isa = PBXGroup;
 			children = (
-				F0D75D7C2176858B000DC661 /* Headers */,
-				F0D75D6F21758D5C000DC661 /* Jura-Bold.ttf */,
-				F0D75D7021758D5C000DC661 /* Jura-Regular.ttf */,
+				F0F7B7E02178054F008DF462 /* Jura-Bold.ttf */,
+				F0F7B7DF2178054F008DF462 /* Jura-Regular.ttf */,
 				B0EB72E3216E3C350098CF27 /* README.md */,
 				B0D30AD2216D5B2500444765 /* SpriteKitWatchFace */,
 				B0D30AEA216D5B2700444765 /* SpriteKitWatchFace WatchKit App */,
@@ -229,6 +228,8 @@
 				B0D30B13216D5C6A00444765 /* FaceScene.sks */,
 				B0D30B00216D5B2800444765 /* NanoAssets.xcassets */,
 				B0D30B02216D5B2800444765 /* Info.plist */,
+				F0F7B7D52177C43D008DF462 /* ShadowLabelNode.h */,
+				F0F7B7D62177C45B008DF462 /* ShadowLabelNode.m */,
 			);
 			path = "SpriteKitWatchFace WatchKit Extension";
 			sourceTree = "<group>";
@@ -385,14 +386,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B0D30AE0216D5B2700444765 /* LaunchScreen.storyboard in Resources */,
+				F0F7B7E521780550008DF462 /* Jura-Bold.ttf in Resources */,
 				B0F66DD72173727500058F22 /* InfoPlist.strings in Resources */,
 				B0DEB03D2172C6E00087FA94 /* FaceScene.sks in Resources */,
-				F0D75D7D2176858B000DC661 /* Headers in Resources */,
-				F0D75D7121758D5C000DC661 /* Jura-Bold.ttf in Resources */,
 				B0D30ADD216D5B2700444765 /* MobileAssets.xcassets in Resources */,
-				F0D75D7521758D5C000DC661 /* Jura-Regular.ttf in Resources */,
 				B0D30ADB216D5B2500444765 /* Main.storyboard in Resources */,
 				B0DEB03E2172C6E50087FA94 /* NanoAssets.xcassets in Resources */,
+				F0F7B7E121780550008DF462 /* Jura-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,10 +400,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0D75D7621758D5C000DC661 /* Jura-Regular.ttf in Resources */,
 				B0D30AEF216D5B2700444765 /* NanoIconAssets.xcassets in Resources */,
-				F0D75D7221758D5C000DC661 /* Jura-Bold.ttf in Resources */,
-				F0D75D7E2176858B000DC661 /* Headers in Resources */,
+				F0F7B7E221780550008DF462 /* Jura-Regular.ttf in Resources */,
+				F0F7B7E621780550008DF462 /* Jura-Bold.ttf in Resources */,
 				B0F66DD82173727500058F22 /* InfoPlist.strings in Resources */,
 				B0D30AED216D5B2700444765 /* Interface.storyboard in Resources */,
 			);
@@ -414,10 +413,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B0D30B01216D5B2800444765 /* NanoAssets.xcassets in Resources */,
-				F0D75D7F2176858B000DC661 /* Headers in Resources */,
-				F0D75D7721758D5C000DC661 /* Jura-Regular.ttf in Resources */,
+				F0F7B7E721780550008DF462 /* Jura-Bold.ttf in Resources */,
+				F0F7B7E321780550008DF462 /* Jura-Regular.ttf in Resources */,
 				B0D30B14216D5C6A00444765 /* FaceScene.sks in Resources */,
-				F0D75D7321758D5C000DC661 /* Jura-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,13 +424,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B0EB72F8216E69AB0098CF27 /* DesktopAssets.xcassets in Resources */,
+				F0F7B7E421780550008DF462 /* Jura-Regular.ttf in Resources */,
 				B0EB72FB216E69AB0098CF27 /* Main.storyboard in Resources */,
+				F0F7B7E821780550008DF462 /* Jura-Bold.ttf in Resources */,
 				B0EB7304216E69C40098CF27 /* NanoAssets.xcassets in Resources */,
-				F0D75D802176858B000DC661 /* Headers in Resources */,
 				B0EB7303216E69C00098CF27 /* FaceScene.sks in Resources */,
 				B0F66DD92173727500058F22 /* InfoPlist.strings in Resources */,
-				F0D75D7421758D5C000DC661 /* Jura-Bold.ttf in Resources */,
-				F0D75D7821758D5C000DC661 /* Jura-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,6 +499,7 @@
 			files = (
 				B0D30AD8216D5B2500444765 /* ViewController.m in Sources */,
 				B0D30AE3216D5B2700444765 /* main.m in Sources */,
+				F0F7B7D72177C45C008DF462 /* ShadowLabelNode.m in Sources */,
 				B0D30AD5216D5B2500444765 /* AppDelegate.m in Sources */,
 				B0DEB03C2172C64E0087FA94 /* FaceScene.m in Sources */,
 			);
@@ -511,6 +509,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0F7B7D82177C45C008DF462 /* ShadowLabelNode.m in Sources */,
 				B0D30AFF216D5B2700444765 /* ExtensionDelegate.m in Sources */,
 				B0EB7307216E6C380098CF27 /* FaceScene.m in Sources */,
 				B0D30AFC216D5B2700444765 /* InterfaceController.m in Sources */,
@@ -523,6 +522,7 @@
 			files = (
 				B0EB72F6216E69AA0098CF27 /* ViewController.m in Sources */,
 				B0D4F2B72172164B00F497E0 /* FaceWindow.m in Sources */,
+				F0F7B7D92177C45C008DF462 /* ShadowLabelNode.m in Sources */,
 				B0EB72FE216E69AB0098CF27 /* main.m in Sources */,
 				B0EB72EC216E69AA0098CF27 /* AppDelegate.m in Sources */,
 				B0EB7308216E6C380098CF27 /* FaceScene.m in Sources */,
