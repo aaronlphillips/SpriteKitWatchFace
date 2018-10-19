@@ -82,8 +82,10 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-	self = [super initWithCoder:coder];
+    self = [super initWithCoder:coder];
 	if (self) {
+        
+        self.now = [NSDate date];
         
         // Debug print available fonts
 //#if TARGET_OS_OSX
@@ -113,6 +115,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         // 44mm: (184.0, 224.0))
 		//self.faceSize = (CGSize){bounds.size.width, bounds.size.height};
         self.faceSize = (CGSize){184, 224};
+        
+        self.glowShader = [SKShader shaderWithFileNamed:@"blur2.fsh"];
         
         self.gaugeFaceWindowAngleFactor = 1.45; // radians to remove from layout arc to account for shape of cutout window overlay
 
@@ -146,6 +150,18 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	}
 	return self;
 }
+    
+-(void) sceneDidLoad
+{
+    NSLog(@"sceneDidLoad");
+    [self refreshTheme];
+}
+
+//-(void)didMoveToView:(SKView *)view
+//{
+//    NSLog(@"didMoveToView");
+//    [self refreshTheme];
+//}
 
 #pragma mark -
 
@@ -310,7 +326,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		
 		NSDictionary *attribs = @{NSFontAttributeName : [[NSFont systemFontOfSize:h weight:NSFontWeightMedium] smallCaps], NSForegroundColorAttributeName : self.textColor};
 		
-		NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
+		NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[self now]] uppercaseString] attributes:attribs];
 		
 		SKLabelNode *numberLabel = [SKLabelNode labelNodeWithAttributedText:labelText];
 		numberLabel.name = @"Date";
@@ -523,7 +539,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		
 		NSDictionary *attribs = @{NSFontAttributeName : [[NSFont systemFontOfSize:h weight:NSFontWeightMedium] smallCaps], NSForegroundColorAttributeName : self.textColor};
 		
-		NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
+		NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[self now]] uppercaseString] attributes:attribs];
 		
 		SKLabelNode *numberLabel = [SKLabelNode labelNodeWithAttributedText:labelText];
 		numberLabel.name = @"Date";
@@ -554,6 +570,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 
 -(void)setupTickmarksForGaugeFaceWithLayerName:(NSString *)layerName
 {
+    if([self view] == nil) return; // need SKView ref (not available on WatchOS)
+    
     CGFloat arcPortion = M_PI/self.gaugeFaceWindowAngleFactor;
     CGFloat margin = 4.0;
     CGFloat labelMargin = 10.0;
@@ -690,7 +708,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
                 NSDateFormatter * df = [[NSDateFormatter alloc] init];
                 [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:[[NSLocale preferredLanguages] firstObject]]];
                 [df setDateFormat:@"d"];
-                labelString = [[df stringFromDate:[NSDate date]] uppercaseString];
+                labelString = [[df stringFromDate:[self now]] uppercaseString];
                 labelColor = self.alternateTextColor; //[SKColor blackColor];
                 //NSLog(@"0th date text: %@", labelString);
                 fontSize = 12;
@@ -731,47 +749,60 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     CGFloat y = 0; // -((h / 2)-8);
     CGFloat sepMargin = .2;
     
-    //NSDictionary *attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Regular" size:h], NSForegroundColorAttributeName : self.textColor};
+    NSDictionary *attribs = @{
+                              NSFontAttributeName : [NSFont fontWithName:@"Jura-Regular" size:h],
+                              NSForegroundColorAttributeName : self.textColor
+                              };
 
     NSDateFormatter * df = [[NSDateFormatter alloc] init];
     [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:[[NSLocale preferredLanguages] firstObject]]];
     
-    SKColor *glowColor = [SKColor colorWithRed:0.68 green:0.70 blue:0.94 alpha:1.0];
-    CGFloat glowRadius = 10;
-    CGFloat glowAlpha = 1.0;
-    NSDictionary *newLayer = @{
-                               @"blur" : [NSNumber numberWithDouble:5.0], //[NSNumber numberWithDouble:glowRadius],
-                               @"alpha" : [NSNumber numberWithDouble:glowAlpha],
-                               @"color" : glowColor //[SKColor redColor]
-                               };
-    NSDictionary *newLayer2 = @{
-                                @"blur" : [NSNumber numberWithDouble:3.0], //[NSNumber numberWithDouble:glowRadius],
-                                @"alpha" : [NSNumber numberWithDouble:glowAlpha],
-                                @"color" : [SKColor whiteColor]
-                                };
+//    SKColor *glowColor = [SKColor colorWithRed:0.68 green:0.70 blue:0.94 alpha:1.0];
+//    CGFloat glowRadius = 10;
+//    CGFloat glowAlpha = 1.0;
+//    NSDictionary *newLayer = @{
+//                               @"blur" : [NSNumber numberWithDouble:5.0], //[NSNumber numberWithDouble:glowRadius],
+//                               @"alpha" : [NSNumber numberWithDouble:glowAlpha],
+//                               @"color" : glowColor //[SKColor redColor]
+//                               };
+//    NSDictionary *newLayer2 = @{
+//                                @"blur" : [NSNumber numberWithDouble:3.0], //[NSNumber numberWithDouble:glowRadius],
+//                                @"alpha" : [NSNumber numberWithDouble:glowAlpha],
+//                                @"color" : [SKColor whiteColor]
+//                                };
     
     // Hour
     [df setDateFormat:@"hh"];
-    NSString *hourString = [[df stringFromDate:[NSDate date]] uppercaseString];
-    ShadowLabelNode *dTimeHour = [ShadowLabelNode labelNodeWithFontNamed:@"Jura-Regular"];
+    NSString *hourString = [[df stringFromDate:[self now]] uppercaseString];
+    //ShadowLabelNode *dTimeHour = [ShadowLabelNode labelNodeWithFontNamed:@"Jura-Regular"];
+    NSAttributedString *hoursText = [[NSAttributedString alloc] initWithString:hourString attributes:attribs];
+    SKLabelNode *dTimeHour = [SKLabelNode labelNodeWithAttributedText:hoursText];
     dTimeHour.text = hourString;
     dTimeHour.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeRight;
     dTimeHour.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     dTimeHour.fontColor = self.textColor;
     dTimeHour.fontSize = h;
-    dTimeHour.shadowAlpha = glowAlpha;
-    dTimeHour.blurRadius = glowRadius;
-    dTimeHour.shadowColor = glowColor;
-    [dTimeHour addLayer : newLayer];
-    [dTimeHour addLayer : newLayer2];
-    dTimeHour.offset = CGPointMake(0, 0);
+    //dTimeHour.shadowAlpha = glowAlpha;
+    //dTimeHour.blurRadius = glowRadius;
+    //dTimeHour.shadowColor = glowColor;
+    //[dTimeHour addLayer : newLayer];
+    //[dTimeHour addLayer : newLayer2];
+    //dTimeHour.offset = CGPointMake(0, 0);
     dTimeHour.position = CGPointMake(-(h*sepMargin),y);
     dTimeHour.name = @"Digital Time Hour";
     [digitalClock addChild:dTimeHour];
     
     // ":" Separator
     NSString *sepString = @":";
-    ShadowLabelNode *dTimeSep = [ShadowLabelNode labelNodeWithFontNamed:@"Jura-Regular"];
+    SKLabelNode *dTimeSep = [SKLabelNode labelNodeWithText:sepString];
+    dTimeSep.fontName = @"Jura-Regular";
+    //ShadowLabelNode *dTimeSep = [ShadowLabelNode labelNodeWithFontNamed:@"Jura-Regular"];
+    //dTimeSep.shadowAlpha = glowAlpha;
+    //dTimeSep.blurRadius = glowRadius;
+    //dTimeSep.shadowColor = glowColor;
+    //dTimeSep.offset = CGPointMake(0, 0);
+    //[dTimeSep addLayer : newLayer];
+    //[dTimeSep addLayer : newLayer2];
     dTimeSep.position = CGPointMake(0,y);
     dTimeSep.name = @"Digital Time Separator";
     dTimeSep.text = sepString;
@@ -779,54 +810,52 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     dTimeSep.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     dTimeSep.fontColor = self.textColor;
     dTimeSep.fontSize = h;
-    dTimeSep.shadowAlpha = glowAlpha;
-    dTimeSep.blurRadius = glowRadius;
-    dTimeSep.shadowColor = glowColor;
-    [dTimeSep addLayer : newLayer];
-    [dTimeSep addLayer : newLayer2];
-    dTimeSep.offset = CGPointMake(0, 0);
     [digitalClock addChild:dTimeSep];
     
     // Minutes
     [df setDateFormat:@"mm"];
-    NSString *minutesString = [[df stringFromDate:[NSDate date]] uppercaseString];
-    //NSAttributedString *minutesText = [[NSAttributedString alloc] initWithString:minutesString attributes:attribs];
-    //SKLabelNode *dTimeMinutes = [SKLabelNode labelNodeWithAttributedText:minutesText];
-    ShadowLabelNode *dTimeMinutes = [ShadowLabelNode labelNodeWithFontNamed:@"Jura-Regular"];
+    NSString *minutesString = [[df stringFromDate:[self now]] uppercaseString];
+    NSAttributedString *minutesText = [[NSAttributedString alloc] initWithString:minutesString attributes:attribs];
+    SKLabelNode *dTimeMinutes = [SKLabelNode labelNodeWithAttributedText:minutesText];
+    //ShadowLabelNode *dTimeMinutes = [ShadowLabelNode labelNodeWithFontNamed:@"Jura-Regular"];
     dTimeMinutes.position = CGPointMake((h*sepMargin),y);
     dTimeMinutes.text = minutesString;
     dTimeMinutes.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
     dTimeMinutes.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     dTimeMinutes.fontColor = self.textColor;
     dTimeMinutes.fontSize = h;
-    dTimeMinutes.shadowAlpha = glowAlpha;
-    dTimeMinutes.blurRadius = glowRadius;
-    dTimeMinutes.shadowColor = glowColor;
-    [dTimeMinutes addLayer : newLayer];
-    [dTimeMinutes addLayer : newLayer2];
-    dTimeMinutes.offset = CGPointMake(0, 0);
+    //dTimeMinutes.shadowAlpha = glowAlpha;
+    //dTimeMinutes.blurRadius = glowRadius;
+    //dTimeMinutes.shadowColor = glowColor;
+    //[dTimeMinutes addLayer : newLayer];
+    //[dTimeMinutes addLayer : newLayer2];
+    //dTimeMinutes.offset = CGPointMake(0, 0);
     dTimeMinutes.name = @"Digital Time Minutes";
     [digitalClock addChild:dTimeMinutes];
     
     // AM/PM
     [df setDateFormat:@"a"];
     //attribs = @{NSFontAttributeName : [NSFont fontWithName:@"Jura-Bold" size:7], NSForegroundColorAttributeName : self.textColor};
-    NSString *ampmString = [[df stringFromDate:[NSDate date]] uppercaseString];
-    //NSAttributedString *ampmText = [[NSAttributedString alloc] initWithString:ampmString attributes:attribs];
-    //SKLabelNode *dTimeAMPM = [SKLabelNode labelNodeWithAttributedText:ampmText];
-    ShadowLabelNode *dTimeAMPM = [ShadowLabelNode labelNodeWithFontNamed:@"Jura-Bold"];
+    NSString *ampmString = [[df stringFromDate:[self now]] uppercaseString];
+    attribs = @{
+                NSFontAttributeName : [NSFont fontWithName:@"Jura-Bold" size:8],
+                NSForegroundColorAttributeName : self.textColor,
+                };
+    NSAttributedString *ampmText = [[NSAttributedString alloc] initWithString:ampmString attributes:attribs];
+    SKLabelNode *dTimeAMPM = [SKLabelNode labelNodeWithAttributedText:ampmText];
+    //ShadowLabelNode *dTimeAMPM = [ShadowLabelNode labelNodeWithFontNamed:@"Jura-Bold"];
     dTimeAMPM.position = CGPointMake(h * 1.5, h * 0.27);
     dTimeAMPM.text = ampmString;
     dTimeAMPM.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
     dTimeAMPM.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     dTimeAMPM.fontColor = self.textColor;
     dTimeAMPM.fontSize = 8;
-    dTimeAMPM.shadowAlpha = glowAlpha;
-    dTimeAMPM.blurRadius = glowRadius;
-    dTimeAMPM.shadowColor = glowColor;
-    [dTimeAMPM addLayer : newLayer];
-    [dTimeAMPM addLayer : newLayer2];
-    dTimeAMPM.offset = CGPointMake(0, 0);
+    //dTimeAMPM.shadowAlpha = glowAlpha;
+    //dTimeAMPM.blurRadius = glowRadius;
+    //dTimeAMPM.shadowColor = glowColor;
+    //[dTimeAMPM addLayer : newLayer];
+    //[dTimeAMPM addLayer : newLayer2];
+    //dTimeAMPM.offset = CGPointMake(0, 0);
     dTimeAMPM.name = @"Digital Time AMPM";
     [digitalClock addChild:dTimeAMPM];
     
@@ -836,7 +865,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     [dTimeSep runAction:[SKAction repeatActionForever:[SKAction sequence:[NSArray arrayWithObjects:fadeOut, fadeIn, nil]]]];
     
     faceMarkings.zPosition = 0;
-    digitalClock.zPosition = 3;
+    
+    digitalClock.zPosition = 6;
     
     digitalClock.blendMode = SKBlendModeScreen;
     digitalClock.alpha = .9;
@@ -846,11 +876,13 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     
     SKNode *gaugeFace = [self childNodeWithName:@"GaugeFace"];
     [gaugeFace addChild:faceMarkings];
-    [gaugeFace addChild:digitalClock];
+    [gaugeFace addChild:digitalClock]; // original layer
     
     SKSpriteNode *gaugeOverlay = (SKSpriteNode*)[gaugeFace childNodeWithName:@"Overlay"];
     gaugeOverlay.color = self.colorRegionColor;
     gaugeOverlay.colorBlendFactor = 1;
+    
+    [self updateGaugeDigitalClockGlow];
     
     /** sizing alignment debug sprites **/
 //    SKSpriteNode *testBlockZ = [SKSpriteNode node];
@@ -914,7 +946,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		
 		NSDictionary *attribs = @{NSFontAttributeName : [[NSFont systemFontOfSize:dateFontSize weight:NSFontWeightMedium] smallCaps], NSForegroundColorAttributeName : self.textColor};
 		
-		NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attribs];
+		NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[self now]] uppercaseString] attributes:attribs];
 
 		SKLabelNode *dateLabelA = (SKLabelNode *)[[self childNodeWithName:@"Markings"] childNodeWithName:@"Date"];
 		dateLabelA.attributedText = labelText;
@@ -928,7 +960,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
                 [df setDateFormat:@"d"];
                 // update without losing other attributes / needing to reinit all the properties in two places
                 NSDictionary *attributes = [(NSAttributedString *)dateLabelC.attributedText attributesAtIndex:0 effectiveRange:NULL];
-                dateLabelC.attributedText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[NSDate date]] uppercaseString] attributes:attributes];
+                dateLabelC.attributedText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[self now]] uppercaseString] attributes:attributes];
             }
         }
 	}
@@ -1514,6 +1546,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 {
 	[self updateHands];
 	[self updateDate];
+    //[self updateGaugeDigitalClockGlow];
 }
 
 -(void)updateHands
@@ -1523,8 +1556,19 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 #else
 	NSDate *now = [NSDate date];
 #endif
-	NSCalendar *calendar = [NSCalendar currentCalendar];
-	NSDateComponents *components = [calendar components:(NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond| NSCalendarUnitNanosecond) fromDate:now];
+    
+
+    // debug speed
+    if(YES){
+        now = [NSDate dateWithTimeIntervalSince1970:[now timeIntervalSince1970] * 1000];
+    }
+    
+    self.now = now;
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:(NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond| NSCalendarUnitNanosecond) fromDate:now];
+	
+	
 	
 	SKNode *face = [self childNodeWithName:@"Face"];
 	
@@ -1557,8 +1601,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         CGFloat staticOffsetBottomHalf = (arcPortion * .944);
         
         // Minutes
-        CGFloat minCount = components.minute;
-        CGFloat minElapsed = (CGFloat)(minCount + (1.0/(60.0*minCount)));
+        //CGFloat minCount = components.minute;
+        CGFloat minElapsed = (CGFloat)(components.minute + 1.0/60.0*components.second);
         rotateToAngle = arcPortion/60.0 * minElapsed;
         rotateToAngle += staticOffsetBottomHalf;
         //minuteHand.zRotation = rotateToAngle;
@@ -1593,7 +1637,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         // may be a cleaner way to do this
         if(digitalClock != nil){
             [df setDateFormat:@"yyyy-MMM-dd hh:mm:ss a"];
-            NSString *nextDateString = [df stringFromDate:[NSDate date]];
+            NSString *nextDateString = [df stringFromDate:[self now]];
             if(![self.prevDateString isEqualToString: nextDateString]){
                 // different second in time (don't need to update the following with sub-second percision
                 [self updateGaugeDigitalClock:digitalClock : components];
@@ -1642,18 +1686,71 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 -(void)updateGaugeDigitalClock:(SKCropNode *)digitalClock :(NSDateComponents *)components
 {
     NSDateFormatter * df = [[NSDateFormatter alloc] init];
-
+    
     SKLabelNode *dTimeHour = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Hour"];
     [df setDateFormat:@"hh"];
-    dTimeHour.text = [[df stringFromDate:[NSDate date]] uppercaseString];
+    //dTimeHour.text = [[df stringFromDate:[self now]] uppercaseString];
+    NSDictionary *attributes = [(NSAttributedString *)dTimeHour.attributedText attributesAtIndex:0 effectiveRange:NULL];
+    dTimeHour.attributedText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[self now]] uppercaseString] attributes:attributes];
     
     SKLabelNode *dTimeMinutes = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Minutes"];
     [df setDateFormat:@"mm"];
-    dTimeMinutes.text = [[df stringFromDate:[NSDate date]] uppercaseString];
+    //dTimeMinutes.text = [[df stringFromDate:[self now]] uppercaseString];
+    //attributes = [(NSAttributedString *)dTimeMinutes.attributedText attributesAtIndex:0 effectiveRange:NULL];
+    dTimeMinutes.attributedText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[self now]] uppercaseString] attributes:attributes];
     
     SKLabelNode *dTimeAMPM = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time AMPM"];
     [df setDateFormat:@"a"];
-    dTimeAMPM.text = [[df stringFromDate:[NSDate date]] uppercaseString];
+    //dTimeAMPM.text = [[df stringFromDate:[self now]] uppercaseString];
+    attributes = [(NSAttributedString *)dTimeAMPM.attributedText attributesAtIndex:0 effectiveRange:NULL];
+    dTimeAMPM.attributedText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[self now]] uppercaseString] attributes:attributes];
+    
+    [self updateGaugeDigitalClockGlow];
+}
+    
+-(void)updateGaugeDigitalClockGlow
+{
+    SKNode *gaugeFace = [self childNodeWithName:@"GaugeFace"];
+    SKNode *digitalClock = [gaugeFace childNodeWithName:@"DigitalClock"];
+    SKNode *glowGang = [gaugeFace childNodeWithName:@"GlowGang"];
+    if(glowGang != nil){
+        [glowGang removeFromParent];
+    }
+    glowGang = [SKSpriteNode node];
+    glowGang.name = @"GlowGang";
+    
+    SKCropNode *glowContainer = [SKCropNode node];
+    glowContainer.name = @"glowContainer";
+    SKSpriteNode *dClockClone = [digitalClock copy];
+    [glowContainer addChild:dClockClone];
+    SKSpriteNode *maskNode = [SKSpriteNode node];
+    maskNode.size = CGSizeMake(184, 224); // full screen so blur isn't cut off by text label bounds
+    maskNode.color = [SKColor colorWithRed:0 green:0 blue:0 alpha:0.1]; // black and nearly transparent, full transparent doesn't render
+    maskNode.zPosition = 3;
+    [glowContainer addChild:maskNode];
+    glowContainer.maskNode = maskNode;
+    SKTexture *texture = [[self view] textureFromNode:glowContainer];
+    SKSpriteNode *dClockGlow = [SKSpriteNode spriteNodeWithTexture:texture size:maskNode.size];
+    dClockGlow.name = @"dClockGlow";
+    dClockGlow.position = CGPointMake(0,0);
+    dClockGlow.color = [SKColor redColor];
+    dClockGlow.colorBlendFactor = 1.0;
+
+    dClockGlow.shader = self.glowShader;
+    dClockGlow.blendMode = SKBlendModeScreen;
+    dClockGlow.zPosition = 5;
+
+//    SKSpriteNode *dClockGlowClone = [dClockGlow copy];
+//    dClockGlowClone.name = @"dClockGlowClone";
+//
+//    SKSpriteNode *dClockGlowClone2 = [dClockGlow copy];
+//    dClockGlowClone2.name = @"dClockGlowClone2";
+
+    [glowGang addChild:dClockGlow];
+    //[glowGang addChild:dClockGlowClone];
+    //[glowGang addChild:dClockGlowClone2];
+
+    [gaugeFace addChild:glowGang];
 }
 
 -(void)refreshTheme

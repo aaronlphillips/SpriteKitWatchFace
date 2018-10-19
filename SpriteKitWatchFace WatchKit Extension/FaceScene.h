@@ -103,7 +103,7 @@ typedef enum : NSUInteger {
 @interface FaceScene : SKScene <SKSceneDelegate>
 
 -(void)refreshTheme;
-
+    
 @property Theme theme;
 @property NumeralStyle numeralStyle;
 @property TickmarkStyle tickmarkStyle;
@@ -128,6 +128,9 @@ typedef enum : NSUInteger {
 @property SKColor *alternateMajorMarkColor;
 @property SKColor *alternateMinorMarkColor;
 @property SKColor *alternateTextColor;
+    
+@property SKShader *glowShader;
+@property NSDate *now;
 
 @property NSString *monogram;
 

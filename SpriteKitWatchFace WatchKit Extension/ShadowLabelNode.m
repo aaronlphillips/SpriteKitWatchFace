@@ -45,17 +45,17 @@ NSString *const ShadowEffectNodeKey = @"ShadowEffectNodeKey";
     }else{
         [effectNode removeFromParent];
     }
-    /* TODO: find a way to do blurring on watch os... might have to use pre-baked sprites for our font face */
-#if TARGET_OS_OSX
-    CIFilter *filter = [CIFilter filterWithName:@"CIGaussianBlur"];
-    CGFloat radius = _blurRadius;
-    if(layer[@"blur"]){
-        radius = (CGFloat)[layer[@"blur"] doubleValue];
-    }
-    [filter setDefaults];
-    [filter setValue:@(radius) forKey:@"inputRadius"];
-    effectNode.filter = filter;
-#endif
+//#if TARGET_OS_OSX
+//    CIFilter *filter = [CIFilter filterWithName:@"CIGaussianBlur"];
+//    CGFloat radius = _blurRadius;
+//    if(layer[@"blur"]){
+//        radius = (CGFloat)[layer[@"blur"] doubleValue];
+//    }
+//    [filter setDefaults];
+//    [filter setValue:@(radius) forKey:@"inputRadius"];
+//    effectNode.filter = filter;
+//#else
+//#endif
     [effectNode removeAllChildren];
     
     SKLabelNode *labelNode = [SKLabelNode labelNodeWithFontNamed:self.fontName];

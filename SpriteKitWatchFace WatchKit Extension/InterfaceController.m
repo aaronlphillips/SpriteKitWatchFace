@@ -36,11 +36,23 @@
 	
 	/* Using the 44mm Apple Watch as the base size, scale down to fit */
     scene.camera.xScale = 184.0/currentDeviceSize.width;
-    scene.camera.yScale = 224.0/currentDeviceSize.height; // 184.0/currentDeviceSize.width
-	
-    //scene.size = CGSizeMake(184, 224); // default to 44mm (why is it defaulting to 154 174 ?)
-    
-    //NSLog(@"scene size %f %f", scene.size.width, scene.size.height);
+    scene.camera.yScale = 184.0/currentDeviceSize.width; //224.0/currentDeviceSize.height;
+
+    //scene.size = CGSizeMake(184, 224); // default to 44mm // scene is 154, 174 if i don't set it
+   
+    //scene.scaleMode = SKSceneScaleModeAspectFit; // black bar on 3 faces
+    //scene.scaleMode = SKSceneScaleModeAspectFill; // zoomed in, still has black bar on bottom
+    //scene.scaleMode = SKSceneScaleModeResizeFill; // black bar on bottom
+    //scene.scaleMode = SKSceneScaleModeFill; // default; stretched, with black bar on bottom
+
+    scene.camera.position = CGPointMake(0, 0);
+    scene.anchorPoint = CGPointMake(.5, .5);
+
+    NSLog(@"device size %f %f" , currentDeviceSize.width, currentDeviceSize.height);
+    NSLog(@"cam scale %f %f" , scene.camera.xScale, scene.camera.yScale);
+    NSLog(@"scene scale %f %f", scene.xScale, scene.yScale);
+    NSLog(@"cam pos %f %f" , scene.camera.position.x, scene.camera.position.y);
+    NSLog(@"scene size %f %f", scene.size.width, scene.size.height);
     
 	[self.scene presentScene:scene];
 }
@@ -95,13 +107,6 @@ CGFloat totalRotation = 0;
             else
                 scene.theme = 0;
         }
-        
-        if((int)scene.scaleMode == (int)SKSceneScaleModeResizeFill){
-            scene.scaleMode = SKSceneScaleModeFill;
-        }else{
-            scene.scaleMode = (SKSceneScaleMode)((int)scene.scaleMode+1);
-        }
-        NSLog(@"scalemode %d", (int)scene.scaleMode);
 		
 		[scene refreshTheme];
 		
