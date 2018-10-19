@@ -157,6 +157,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     [self refreshTheme];
 }
 
+// (not available on WatchOS) :/
 //-(void)didMoveToView:(SKView *)view
 //{
 //    NSLog(@"didMoveToView");
@@ -570,7 +571,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 
 -(void)setupTickmarksForGaugeFaceWithLayerName:(NSString *)layerName
 {
-    if([self view] == nil) return; // need SKView ref (not available on WatchOS)
+    //if([self view] == nil) return; // need SKView ref (not available on WatchOS) :/
     
     CGFloat arcPortion = M_PI/self.gaugeFaceWindowAngleFactor;
     CGFloat margin = 4.0;
@@ -1546,7 +1547,6 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 {
 	[self updateHands];
 	[self updateDate];
-    //[self updateGaugeDigitalClockGlow];
 }
 
 -(void)updateHands
@@ -1557,9 +1557,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	NSDate *now = [NSDate date];
 #endif
     
-
     // debug speed
-    if(YES){
+    if(NO){
         now = [NSDate dateWithTimeIntervalSince1970:[now timeIntervalSince1970] * 1000];
     }
     
@@ -1710,47 +1709,47 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     
 -(void)updateGaugeDigitalClockGlow
 {
-    SKNode *gaugeFace = [self childNodeWithName:@"GaugeFace"];
-    SKNode *digitalClock = [gaugeFace childNodeWithName:@"DigitalClock"];
-    SKNode *glowGang = [gaugeFace childNodeWithName:@"GlowGang"];
-    if(glowGang != nil){
-        [glowGang removeFromParent];
-    }
-    glowGang = [SKSpriteNode node];
-    glowGang.name = @"GlowGang";
-    
-    SKCropNode *glowContainer = [SKCropNode node];
-    glowContainer.name = @"glowContainer";
-    SKSpriteNode *dClockClone = [digitalClock copy];
-    [glowContainer addChild:dClockClone];
-    SKSpriteNode *maskNode = [SKSpriteNode node];
-    maskNode.size = CGSizeMake(184, 224); // full screen so blur isn't cut off by text label bounds
-    maskNode.color = [SKColor colorWithRed:0 green:0 blue:0 alpha:0.1]; // black and nearly transparent, full transparent doesn't render
-    maskNode.zPosition = 3;
-    [glowContainer addChild:maskNode];
-    glowContainer.maskNode = maskNode;
-    SKTexture *texture = [[self view] textureFromNode:glowContainer];
-    SKSpriteNode *dClockGlow = [SKSpriteNode spriteNodeWithTexture:texture size:maskNode.size];
-    dClockGlow.name = @"dClockGlow";
-    dClockGlow.position = CGPointMake(0,0);
-    dClockGlow.color = [SKColor redColor];
-    dClockGlow.colorBlendFactor = 1.0;
-
-    dClockGlow.shader = self.glowShader;
-    dClockGlow.blendMode = SKBlendModeScreen;
-    dClockGlow.zPosition = 5;
-
-//    SKSpriteNode *dClockGlowClone = [dClockGlow copy];
-//    dClockGlowClone.name = @"dClockGlowClone";
+//    SKNode *gaugeFace = [self childNodeWithName:@"GaugeFace"];
+//    SKNode *digitalClock = [gaugeFace childNodeWithName:@"DigitalClock"];
+//    SKNode *glowGang = [gaugeFace childNodeWithName:@"GlowGang"];
+//    if(glowGang != nil){
+//        [glowGang removeFromParent];
+//    }
+//    glowGang = [SKSpriteNode node];
+//    glowGang.name = @"GlowGang";
 //
-//    SKSpriteNode *dClockGlowClone2 = [dClockGlow copy];
-//    dClockGlowClone2.name = @"dClockGlowClone2";
-
-    [glowGang addChild:dClockGlow];
-    //[glowGang addChild:dClockGlowClone];
-    //[glowGang addChild:dClockGlowClone2];
-
-    [gaugeFace addChild:glowGang];
+//    SKCropNode *glowContainer = [SKCropNode node];
+//    glowContainer.name = @"glowContainer";
+//    SKSpriteNode *dClockClone = [digitalClock copy];
+//    [glowContainer addChild:dClockClone];
+//    SKSpriteNode *maskNode = [SKSpriteNode node];
+//    maskNode.size = CGSizeMake(184, 224); // full screen so blur isn't cut off by text label bounds
+//    maskNode.color = [SKColor colorWithRed:0 green:0 blue:0 alpha:0.1]; // black and nearly transparent, full transparent doesn't render
+//    maskNode.zPosition = 3;
+//    [glowContainer addChild:maskNode];
+//    glowContainer.maskNode = maskNode;
+//    SKTexture *texture = [[self view] textureFromNode:glowContainer];
+//    SKSpriteNode *dClockGlow = [SKSpriteNode spriteNodeWithTexture:texture size:maskNode.size];
+//    dClockGlow.name = @"dClockGlow";
+//    dClockGlow.position = CGPointMake(0,0);
+//    dClockGlow.color = [SKColor redColor];
+//    dClockGlow.colorBlendFactor = 1.0;
+//
+//    dClockGlow.shader = self.glowShader;
+//    dClockGlow.blendMode = SKBlendModeScreen;
+//    dClockGlow.zPosition = 5;
+//
+////    SKSpriteNode *dClockGlowClone = [dClockGlow copy];
+////    dClockGlowClone.name = @"dClockGlowClone";
+////
+////    SKSpriteNode *dClockGlowClone2 = [dClockGlow copy];
+////    dClockGlowClone2.name = @"dClockGlowClone2";
+//
+//    [glowGang addChild:dClockGlow];
+//    //[glowGang addChild:dClockGlowClone];
+//    //[glowGang addChild:dClockGlowClone2];
+//
+//    [gaugeFace addChild:glowGang];
 }
 
 -(void)refreshTheme
