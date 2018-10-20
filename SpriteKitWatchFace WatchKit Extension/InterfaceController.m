@@ -36,9 +36,9 @@
 	
 	/* Using the 44mm Apple Watch as the base size, scale down to fit */
     scene.camera.xScale = 184.0/currentDeviceSize.width;
-    scene.camera.yScale = 184.0/currentDeviceSize.width; //224.0/currentDeviceSize.height;
+    scene.camera.yScale = 224.0/currentDeviceSize.height; // 184.0/currentDeviceSize.width;
 
-    //scene.size = CGSizeMake(184, 224); // default to 44mm // scene is 154, 174 if i don't set it
+    scene.size = CGSizeMake(184, 224); // default to 44mm // scene is 154, 174 if i don't set it
    
     //scene.scaleMode = SKSceneScaleModeAspectFit; // black bar on 3 faces
     //scene.scaleMode = SKSceneScaleModeAspectFill; // zoomed in, still has black bar on bottom

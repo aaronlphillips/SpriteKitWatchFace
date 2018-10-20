@@ -116,7 +116,19 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		//self.faceSize = (CGSize){bounds.size.width, bounds.size.height};
         self.faceSize = (CGSize){184, 224};
         
-        self.glowShader = [SKShader shaderWithFileNamed:@"blur2.fsh"];
+        self.glowShader = [SKShader shaderWithFileNamed:@"blur.fsh"];
+        //self.glowShader = [SKShader shaderWithFileNamed:@"wave.fsh"];
+        
+        NSArray<SKAttribute *> *shaderAttributes = [
+                                           NSArray arrayWithObjects:
+                                            [SKAttribute attributeWithName:@"resolution" type: SKAttributeTypeVectorFloat2],
+                                            [SKAttribute attributeWithName:@"radius" type: SKAttributeTypeVectorFloat2],
+                                            [SKAttribute attributeWithName:@"tint" type: SKAttributeTypeVectorFloat4],
+                                            [SKAttribute attributeWithName:@"direction" type: SKAttributeTypeVectorFloat3],
+                                            nil
+                                           ];
+        self.glowShader.attributes = shaderAttributes;
+
         
         self.gaugeFaceWindowAngleFactor = 1.45; // radians to remove from layout arc to account for shape of cutout window overlay
 
@@ -125,7 +137,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         
         //self.faceStyle = FaceStyleRound;
         self.faceStyle = FaceStyleGauge;
-        
+        self.glowFXEnabled = YES;
         self.showSecondhand = YES;
 		self.numeralStyle = NumeralStyleAll;
 		self.tickmarkStyle = TickmarkStyleAll;
@@ -699,7 +711,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
                 /* Date BG Circle */
                 SKSpriteNode *gDateBGDot = [SKSpriteNode spriteNodeWithImageNamed:@"Gauge_DateBG"];
                 [faceMarkings addChild:gDateBGDot];
-                gDateBGDot.position = CGPointMake(-workingRadius + 20, 39);
+                gDateBGDot.position = CGPointMake(-workingRadius + 20, 38.5);
                 //gDateBGDot.position = CGPointMake(-workingRadius + labelMargin + 16, 41);
                 gDateBGDot.zPosition = 1;
                 gDateBGDot.yScale = gDateBGDot.xScale = 0.66;
@@ -712,7 +724,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
                 labelString = [[df stringFromDate:[self now]] uppercaseString];
                 labelColor = self.alternateTextColor; //[SKColor blackColor];
                 //NSLog(@"0th date text: %@", labelString);
-                fontSize = 12;
+                fontSize = 11;
                 fontName = @"Jura-Bold";
                 labelName = @"GaugeDate";
             }
@@ -867,23 +879,23 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     
     faceMarkings.zPosition = 0;
     
-    digitalClock.zPosition = 6;
+    digitalClock.zPosition = 3;
     
     digitalClock.blendMode = SKBlendModeScreen;
-    digitalClock.alpha = .9;
+    digitalClock.alpha = 1;
     
     //SKSpriteNode *digitalClockSprite = (SKSpriteNode*)digitalClock;
     //digitalClockSprite.blendMode = SKBlendModeMultiply;
     
     SKNode *gaugeFace = [self childNodeWithName:@"GaugeFace"];
     [gaugeFace addChild:faceMarkings];
-    [gaugeFace addChild:digitalClock]; // original layer
+    [gaugeFace addChild:digitalClock];
     
     SKSpriteNode *gaugeOverlay = (SKSpriteNode*)[gaugeFace childNodeWithName:@"Overlay"];
     gaugeOverlay.color = self.colorRegionColor;
     gaugeOverlay.colorBlendFactor = 1;
     
-    [self updateGaugeDigitalClockGlow];
+    //[self updateGaugeDigitalClockGlow];
     
     /** sizing alignment debug sprites **/
 //    SKSpriteNode *testBlockZ = [SKSpriteNode node];
@@ -956,12 +968,12 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		dateLabelB.attributedText = labelText;
         
         if (self.faceStyle == FaceStyleGauge){
-            SKLabelNode *dateLabelC = (SKLabelNode *)[[[self childNodeWithName:@"GaugeFace"] childNodeWithName:@"Markings"] childNodeWithName:@"GaugeDate"];
-            if(dateLabelC != nil){
+            SKLabelNode *gDate = (SKLabelNode *)[[[self childNodeWithName:@"GaugeFace"] childNodeWithName:@"Markings"] childNodeWithName:@"GaugeDate"];
+            if(gDate != nil){
                 [df setDateFormat:@"d"];
                 // update without losing other attributes / needing to reinit all the properties in two places
-                NSDictionary *attributes = [(NSAttributedString *)dateLabelC.attributedText attributesAtIndex:0 effectiveRange:NULL];
-                dateLabelC.attributedText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[self now]] uppercaseString] attributes:attributes];
+                NSDictionary *attributes = [(NSAttributedString *)gDate.attributedText attributesAtIndex:0 effectiveRange:NULL];
+                gDate.attributedText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[self now]] uppercaseString] attributes:attributes];
             }
         }
 	}
@@ -1547,6 +1559,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 {
 	[self updateHands];
 	[self updateDate];
+    [self updateGaugeDigitalClockGlow]; // too intense for watchos
 }
 
 -(void)updateHands
@@ -1558,7 +1571,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 #endif
     
     // debug speed
-    if(NO){
+    if(self.debugSpeedEnabled){
         now = [NSDate dateWithTimeIntervalSince1970:[now timeIntervalSince1970] * 1000];
     }
     
@@ -1588,7 +1601,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         SKNode *secondHand = [guageFace childNodeWithName:@"Seconds"];
         
         // Hours
-        CGFloat rotateToAngle = - arcPortion/12.0 * ((CGFloat)(components.hour%12 + 1.0/60.0*components.minute)) + (arcPortion * 0.5);
+        CGFloat extra = 0; //1.0/60.0*components.minute; // uncomment to smooth out
+        CGFloat rotateToAngle = - arcPortion/12.0 * ((CGFloat)(components.hour%12 + extra)) + (arcPortion * 0.5);
         //CGFloat duration = fabs(rotateToAngle - hourHand.zRotation) / 180;
         if(components.hour%12 == 0 && components.second == 0){
             SKAction *animRotateHour = [SKAction rotateToAngle:rotateToAngle duration:1];
@@ -1637,6 +1651,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         if(digitalClock != nil){
             [df setDateFormat:@"yyyy-MMM-dd hh:mm:ss a"];
             NSString *nextDateString = [df stringFromDate:[self now]];
+            //NSLog(@"date compare %@ %@", nextDateString, [self prevDateString]);
             if(![self.prevDateString isEqualToString: nextDateString]){
                 // different second in time (don't need to update the following with sub-second percision
                 [self updateGaugeDigitalClock:digitalClock : components];
@@ -1689,13 +1704,16 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     SKLabelNode *dTimeHour = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Hour"];
     [df setDateFormat:@"hh"];
     //dTimeHour.text = [[df stringFromDate:[self now]] uppercaseString];
+    NSString *dTimeHourString = @"\n";
+    dTimeHourString = [dTimeHourString stringByAppendingString:[[df stringFromDate:[self now]] uppercaseString]];
+    dTimeHourString = [dTimeHourString stringByAppendingString:@"\n"];
     NSDictionary *attributes = [(NSAttributedString *)dTimeHour.attributedText attributesAtIndex:0 effectiveRange:NULL];
-    dTimeHour.attributedText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[self now]] uppercaseString] attributes:attributes];
+    dTimeHour.attributedText = [[NSAttributedString alloc] initWithString:dTimeHourString attributes:attributes];
     
     SKLabelNode *dTimeMinutes = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time Minutes"];
     [df setDateFormat:@"mm"];
     //dTimeMinutes.text = [[df stringFromDate:[self now]] uppercaseString];
-    //attributes = [(NSAttributedString *)dTimeMinutes.attributedText attributesAtIndex:0 effectiveRange:NULL];
+    attributes = [(NSAttributedString *)dTimeMinutes.attributedText attributesAtIndex:0 effectiveRange:NULL];
     dTimeMinutes.attributedText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[self now]] uppercaseString] attributes:attributes];
     
     SKLabelNode *dTimeAMPM = (SKLabelNode *)[digitalClock childNodeWithName:@"Digital Time AMPM"];
@@ -1709,47 +1727,104 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     
 -(void)updateGaugeDigitalClockGlow
 {
-//    SKNode *gaugeFace = [self childNodeWithName:@"GaugeFace"];
-//    SKNode *digitalClock = [gaugeFace childNodeWithName:@"DigitalClock"];
-//    SKNode *glowGang = [gaugeFace childNodeWithName:@"GlowGang"];
-//    if(glowGang != nil){
-//        [glowGang removeFromParent];
-//    }
-//    glowGang = [SKSpriteNode node];
-//    glowGang.name = @"GlowGang";
-//
-//    SKCropNode *glowContainer = [SKCropNode node];
-//    glowContainer.name = @"glowContainer";
-//    SKSpriteNode *dClockClone = [digitalClock copy];
-//    [glowContainer addChild:dClockClone];
-//    SKSpriteNode *maskNode = [SKSpriteNode node];
-//    maskNode.size = CGSizeMake(184, 224); // full screen so blur isn't cut off by text label bounds
-//    maskNode.color = [SKColor colorWithRed:0 green:0 blue:0 alpha:0.1]; // black and nearly transparent, full transparent doesn't render
-//    maskNode.zPosition = 3;
-//    [glowContainer addChild:maskNode];
-//    glowContainer.maskNode = maskNode;
-//    SKTexture *texture = [[self view] textureFromNode:glowContainer];
-//    SKSpriteNode *dClockGlow = [SKSpriteNode spriteNodeWithTexture:texture size:maskNode.size];
-//    dClockGlow.name = @"dClockGlow";
-//    dClockGlow.position = CGPointMake(0,0);
-//    dClockGlow.color = [SKColor redColor];
-//    dClockGlow.colorBlendFactor = 1.0;
-//
-//    dClockGlow.shader = self.glowShader;
-//    dClockGlow.blendMode = SKBlendModeScreen;
-//    dClockGlow.zPosition = 5;
-//
-////    SKSpriteNode *dClockGlowClone = [dClockGlow copy];
-////    dClockGlowClone.name = @"dClockGlowClone";
-////
-////    SKSpriteNode *dClockGlowClone2 = [dClockGlow copy];
-////    dClockGlowClone2.name = @"dClockGlowClone2";
-//
-//    [glowGang addChild:dClockGlow];
-//    //[glowGang addChild:dClockGlowClone];
-//    //[glowGang addChild:dClockGlowClone2];
-//
-//    [gaugeFace addChild:glowGang];
+    SKNode *gaugeFace = [self childNodeWithName:@"GaugeFace"];
+    SKNode *digitalClock = [gaugeFace childNodeWithName:@"DigitalClock"];
+    SKNode *glowGang = [gaugeFace childNodeWithName:@"GlowGang"];
+    if(glowGang != nil){
+        [glowGang removeFromParent];
+    }
+    if(!self.glowFXEnabled){
+        return;
+    }
+    glowGang = [SKSpriteNode node];
+    glowGang.name = @"GlowGang";
+    
+    SKCropNode *glowContainer = [SKCropNode node];
+    glowContainer.name = @"glowContainer";
+    SKSpriteNode *dClockClone = [digitalClock copy];
+    [glowContainer addChild:dClockClone];
+    SKSpriteNode *maskNode = [SKSpriteNode node];
+    maskNode.name = @"maskNode";
+    maskNode.size = CGSizeMake(184, 224); // full screen so blur isn't cut off by text label bounds
+    maskNode.color = [SKColor colorWithRed:0 green:0 blue:0 alpha:0.1]; // black and nearly transparent, full transparent doesn't render
+    maskNode.zPosition = 3;
+    [glowContainer addChild:maskNode];
+    glowContainer.maskNode = maskNode;
+    //SKTexture *texture = [[self view] textureFromNode:glowContainer];
+    //SKSpriteNode *dClockGlow = [SKSpriteNode spriteNodeWithTexture:texture size:maskNode.size];
+    
+    SKEffectNode *dClockGlow = [SKEffectNode node];
+    [dClockGlow addChild:glowContainer];
+    dClockGlow.name = @"dClockGlow1";
+    dClockGlow.position = CGPointMake(0,0);
+    //dClockGlow.color = [SKColor redColor];
+    //dClockGlow.colorBlendFactor = 1.0;
+    
+    [dClockGlow setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(184, 224)] forAttributeNamed:@"resolution"];
+    //[dClockGlow setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(3, 1)] forAttributeNamed:@"radius"];
+    [dClockGlow setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(1, 1, 1, 1)] forAttributeNamed:@"tint"];
+    [dClockGlow setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(.5, .5, 0)] forAttributeNamed:@"direction"];
+    dClockGlow.shader = self.glowShader;
+    dClockGlow.shouldEnableEffects = YES;
+    dClockGlow.blendMode = SKBlendModeAdd; // SKBlendModeAlpha; // SKBlendModeAdd;
+    dClockGlow.zPosition = 5;
+    [glowGang addChild:dClockGlow];
+    
+    //SKEffectNode *dClockGlow2 = [SKEffectNode node];
+    SKEffectNode *dClockGlow2 = [dClockGlow copy];
+    dClockGlow2.name = @"dClockGlow2";
+    [dClockGlow2 setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(184, 224)] forAttributeNamed:@"resolution"];
+    //[dClockGlow2 setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(20, 1)] forAttributeNamed:@"radius"];
+    [dClockGlow2 setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(1, 1, 0)] forAttributeNamed:@"direction"];
+    [dClockGlow2 setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(0.63, 0.64, 0.87, 1)] forAttributeNamed:@"tint"];
+    dClockGlow2.shader = self.glowShader;
+    dClockGlow2.shouldEnableEffects = YES;
+    dClockGlow2.blendMode = SKBlendModeAdd; // SKBlendModeAlpha; //SKBlendModeAdd;
+    //dClockGlow2.alpha = .5;
+    [glowGang addChild:dClockGlow2];
+    
+    SKEffectNode *secondPass = [SKEffectNode node];
+    secondPass.name = @"secondPass";
+    secondPass.shouldEnableEffects = YES;
+    secondPass.zPosition = 5;
+    [secondPass addChild:glowGang];
+    [secondPass setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(184, 224)] forAttributeNamed:@"resolution"];
+    //[secondPass setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(20, 1)] forAttributeNamed:@"radius"];
+    [secondPass setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(-1.5, -1.5, 0)] forAttributeNamed:@"direction"];
+    [secondPass setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(0.63, 0.64, 0.87, 1)] forAttributeNamed:@"tint"];
+    secondPass.shader = self.glowShader;
+    secondPass.blendMode = SKBlendModeAdd; // SKBlendModeAlpha; //SKBlendModeAdd;
+    
+    SKEffectNode *subPass = [secondPass copy];
+    subPass.name = @"subPass";
+    subPass.shouldEnableEffects = YES;
+    subPass.zPosition = 5;
+    [subPass addChild:[glowGang copy]];
+    [subPass setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(184, 224)] forAttributeNamed:@"resolution"];
+    //[subPass setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(20, 1)] forAttributeNamed:@"radius"];
+    [subPass setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(-3, -3, 0)] forAttributeNamed:@"direction"];
+    [subPass setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(0.63, 0.64, 0.87, 1)] forAttributeNamed:@"tint"];
+    subPass.shader = self.glowShader;
+    subPass.blendMode = SKBlendModeAdd; // SKBlendModeAlpha; //SKBlendModeAdd;
+    [glowGang addChild:subPass];
+    
+    SKEffectNode *thirdPass = [SKEffectNode node];
+    [thirdPass addChild:secondPass];
+    thirdPass.name = @"GlowGang";
+    thirdPass.shouldEnableEffects = YES;
+    thirdPass.zPosition = 5;
+    [thirdPass setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(184, 224)] forAttributeNamed:@"resolution"];
+    //[thirdPass setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(20, 1)] forAttributeNamed:@"radius"];
+    [thirdPass setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(-1.5, 1, 0)] forAttributeNamed:@"direction"];
+    [thirdPass setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(0.63, 0.64, 0.87, 1)] forAttributeNamed:@"tint"];
+    thirdPass.shader = self.glowShader;
+    thirdPass.blendMode = SKBlendModeAdd; // SKBlendModeAlpha; //SKBlendModeAdd;
+    
+    digitalClock.alpha = .9;
+    SKSpriteNode *digitalClockSprite = (SKSpriteNode*)digitalClock;
+    digitalClockSprite.blendMode = SKBlendModeAlpha; //SKBlendModeAdd;
+    glowGang.alpha = 1;
+    [gaugeFace addChild:thirdPass];
 }
 
 -(void)refreshTheme
@@ -1906,6 +1981,17 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		
 		self.centerDiscStyle = arc4random()%CenterDiscStyleMAX;
 	}
+    else if (key == 's')
+    {
+        self.debugSpeedEnabled = !self.debugSpeedEnabled;
+        if(!self.debugSpeedEnabled){
+            self.now = [NSDate date];
+        }
+    }
+    else if (key == 'g')
+    {
+        self.glowFXEnabled = !self.glowFXEnabled;
+    }
 	
 	[self refreshTheme];
 }

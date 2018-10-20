@@ -49,10 +49,6 @@
 		F076DFED217980BC0014812F /* SHKLightGrid.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFEB217980BC0014812F /* SHKLightGrid.fsh */; };
 		F076DFEE217980BC0014812F /* SHKLightGrid.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFEB217980BC0014812F /* SHKLightGrid.fsh */; };
 		F076DFEF217980BC0014812F /* SHKLightGrid.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFEB217980BC0014812F /* SHKLightGrid.fsh */; };
-		F076DFF6217986B70014812F /* blur.vsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFF5217986B70014812F /* blur.vsh */; };
-		F076DFF7217986B70014812F /* blur.vsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFF5217986B70014812F /* blur.vsh */; };
-		F076DFF8217986B70014812F /* blur.vsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFF5217986B70014812F /* blur.vsh */; };
-		F076DFF9217986B70014812F /* blur.vsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFF5217986B70014812F /* blur.vsh */; };
 		F076DFFB217987EE0014812F /* blur.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFFA217987EE0014812F /* blur.fsh */; };
 		F076DFFC217987EE0014812F /* blur.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFFA217987EE0014812F /* blur.fsh */; };
 		F076DFFD217987EE0014812F /* blur.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFFA217987EE0014812F /* blur.fsh */; };
@@ -61,6 +57,10 @@
 		F076E001217A88250014812F /* blur2.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFFF217A88250014812F /* blur2.fsh */; };
 		F076E002217A88250014812F /* blur2.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFFF217A88250014812F /* blur2.fsh */; };
 		F076E003217A88250014812F /* blur2.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076DFFF217A88250014812F /* blur2.fsh */; };
+		F076E005217AC0550014812F /* blur3.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076E004217AC0550014812F /* blur3.fsh */; };
+		F076E006217AC0550014812F /* blur3.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076E004217AC0550014812F /* blur3.fsh */; };
+		F076E007217AC0550014812F /* blur3.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076E004217AC0550014812F /* blur3.fsh */; };
+		F076E008217AC0550014812F /* blur3.fsh in Resources */ = {isa = PBXBuildFile; fileRef = F076E004217AC0550014812F /* blur3.fsh */; };
 		F0F7B7D72177C45C008DF462 /* ShadowLabelNode.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F7B7D62177C45B008DF462 /* ShadowLabelNode.m */; };
 		F0F7B7D82177C45C008DF462 /* ShadowLabelNode.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F7B7D62177C45B008DF462 /* ShadowLabelNode.m */; };
 		F0F7B7D92177C45C008DF462 /* ShadowLabelNode.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F7B7D62177C45B008DF462 /* ShadowLabelNode.m */; };
@@ -158,9 +158,9 @@
 		F04A57CA21797DED0087C027 /* wave.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = wave.fsh; sourceTree = "<group>"; };
 		F04A57CB21797DEE0087C027 /* glow.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = glow.fsh; sourceTree = "<group>"; };
 		F076DFEB217980BC0014812F /* SHKLightGrid.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = SHKLightGrid.fsh; sourceTree = "<group>"; };
-		F076DFF5217986B70014812F /* blur.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = blur.vsh; sourceTree = "<group>"; };
 		F076DFFA217987EE0014812F /* blur.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = blur.fsh; sourceTree = "<group>"; };
 		F076DFFF217A88250014812F /* blur2.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = blur2.fsh; sourceTree = "<group>"; };
+		F076E004217AC0550014812F /* blur3.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = blur3.fsh; sourceTree = "<group>"; };
 		F0D75D7A217684B7000DC661 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		F0F7B7D52177C43D008DF462 /* ShadowLabelNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShadowLabelNode.h; sourceTree = "<group>"; };
 		F0F7B7D62177C45B008DF462 /* ShadowLabelNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShadowLabelNode.m; sourceTree = "<group>"; };
@@ -286,8 +286,8 @@
 		F076DFEA2179809F0014812F /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
+				F076E004217AC0550014812F /* blur3.fsh */,
 				F076DFFF217A88250014812F /* blur2.fsh */,
-				F076DFF5217986B70014812F /* blur.vsh */,
 				F04A57CB21797DEE0087C027 /* glow.fsh */,
 				F04A57CA21797DED0087C027 /* wave.fsh */,
 				F076DFEB217980BC0014812F /* SHKLightGrid.fsh */,
@@ -429,7 +429,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F076DFF6217986B70014812F /* blur.vsh in Resources */,
 				B0D30AE0216D5B2700444765 /* LaunchScreen.storyboard in Resources */,
 				F0F7B7E521780550008DF462 /* Jura-Bold.ttf in Resources */,
 				B0F66DD72173727500058F22 /* InfoPlist.strings in Resources */,
@@ -443,6 +442,7 @@
 				F04A57CC21797DEE0087C027 /* wave.fsh in Resources */,
 				F04A57D021797DEE0087C027 /* glow.fsh in Resources */,
 				F0F7B7E121780550008DF462 /* Jura-Regular.ttf in Resources */,
+				F076E005217AC0550014812F /* blur3.fsh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -450,7 +450,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F076DFF7217986B70014812F /* blur.vsh in Resources */,
 				F04A57D121797DEE0087C027 /* glow.fsh in Resources */,
 				B0D30AEF216D5B2700444765 /* NanoIconAssets.xcassets in Resources */,
 				F0F7B7E221780550008DF462 /* Jura-Regular.ttf in Resources */,
@@ -458,6 +457,7 @@
 				F0F7B7E621780550008DF462 /* Jura-Bold.ttf in Resources */,
 				B0F66DD82173727500058F22 /* InfoPlist.strings in Resources */,
 				F076E001217A88250014812F /* blur2.fsh in Resources */,
+				F076E006217AC0550014812F /* blur3.fsh in Resources */,
 				F04A57CD21797DEE0087C027 /* wave.fsh in Resources */,
 				F076DFFC217987EE0014812F /* blur.fsh in Resources */,
 				B0D30AED216D5B2700444765 /* Interface.storyboard in Resources */,
@@ -473,7 +473,7 @@
 				B0D30B01216D5B2800444765 /* NanoAssets.xcassets in Resources */,
 				F0F7B7E721780550008DF462 /* Jura-Bold.ttf in Resources */,
 				F0F7B7E321780550008DF462 /* Jura-Regular.ttf in Resources */,
-				F076DFF8217986B70014812F /* blur.vsh in Resources */,
+				F076E007217AC0550014812F /* blur3.fsh in Resources */,
 				F04A57CE21797DEE0087C027 /* wave.fsh in Resources */,
 				F04A57D221797DEE0087C027 /* glow.fsh in Resources */,
 				F076DFFD217987EE0014812F /* blur.fsh in Resources */,
@@ -489,10 +489,10 @@
 				F0F7B7E421780550008DF462 /* Jura-Regular.ttf in Resources */,
 				F04A57CF21797DEE0087C027 /* wave.fsh in Resources */,
 				F076E003217A88250014812F /* blur2.fsh in Resources */,
+				F076E008217AC0550014812F /* blur3.fsh in Resources */,
 				F076DFEF217980BC0014812F /* SHKLightGrid.fsh in Resources */,
 				F076DFFE217987EE0014812F /* blur.fsh in Resources */,
 				B0EB72FB216E69AB0098CF27 /* Main.storyboard in Resources */,
-				F076DFF9217986B70014812F /* blur.vsh in Resources */,
 				F0F7B7E821780550008DF462 /* Jura-Bold.ttf in Resources */,
 				B0EB7304216E69C40098CF27 /* NanoAssets.xcassets in Resources */,
 				B0EB7303216E69C00098CF27 /* FaceScene.sks in Resources */,
