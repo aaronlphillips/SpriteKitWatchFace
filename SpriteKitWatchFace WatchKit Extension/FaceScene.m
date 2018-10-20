@@ -118,6 +118,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         
         self.glowShader = [SKShader shaderWithFileNamed:@"blur.fsh"];
         //self.glowShader = [SKShader shaderWithFileNamed:@"wave.fsh"];
+        self.downsampleBlur = 0.5;
         
         NSArray<SKAttribute *> *shaderAttributes = [
                                            NSArray arrayWithObjects:
@@ -1396,7 +1397,8 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 -(void)setupScene
 {
 	SKNode *face = [self childNodeWithName:@"Face"];
-	
+    face.zPosition = 100;
+    
 	SKSpriteNode *hourHand = (SKSpriteNode *)[face childNodeWithName:@"Hours"];
 	SKSpriteNode *minuteHand = (SKSpriteNode *)[face childNodeWithName:@"Minutes"];
 	
@@ -1729,102 +1731,190 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 {
     SKNode *gaugeFace = [self childNodeWithName:@"GaugeFace"];
     SKNode *digitalClock = [gaugeFace childNodeWithName:@"DigitalClock"];
-    SKNode *glowGang = [gaugeFace childNodeWithName:@"GlowGang"];
-    if(glowGang != nil){
-        [glowGang removeFromParent];
+    SKNode *glowGroup = [gaugeFace childNodeWithName:@"glowGroup"];
+    if(glowGroup != nil){
+        [glowGroup removeFromParent];
     }
     if(!self.glowFXEnabled){
         return;
     }
-    glowGang = [SKSpriteNode node];
-    glowGang.name = @"GlowGang";
+    glowGroup = [SKSpriteNode node];
+    glowGroup.name = @"glowGroup";
     
-    SKCropNode *glowContainer = [SKCropNode node];
-    glowContainer.name = @"glowContainer";
-    SKSpriteNode *dClockClone = [digitalClock copy];
-    [glowContainer addChild:dClockClone];
+    digitalClock.alpha = 1;
+    
+    CGFloat pass1Radius = 0.75;
+    CGFloat pass2Radius = 2;
+    CGFloat pass3Radius = 2.25;
+    CGFloat pass4Radius = 2;
+    CGFloat glowMaxAlpha = 0.4;
+    
+    simd_float2 resolution = simd_make_float2(184.0, 224);
+//    if(_downsampleBlur){
+//        resolution = simd_make_float2(184.0 * 0.5, 224 * 0.5);
+//    }
+    
+    // tried a multi-pass approach here but since we don't have access to SKView and textureFromNode on watchOS
+    // we can't pass the results of one shaderPass into the next
+
+    // X1 + Y1
+    SKEffectNode *shadedLayer_Pass1 = [self generateBlurEffectLayerWithName:@"shadedLayer_Pass1" inputNode:(SKEffectNode *)[digitalClock copy]];
+    [shadedLayer_Pass1 setValue:[SKAttributeValue valueWithVectorFloat2:resolution] forAttributeNamed:@"resolution"];
+    [shadedLayer_Pass1 setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(1, 1, 1, glowMaxAlpha)] forAttributeNamed:@"tint"];
+    [shadedLayer_Pass1 setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(pass1Radius, pass1Radius, 0)] forAttributeNamed:@"direction"];
+    shadedLayer_Pass1.blendMode = SKBlendModeAdd;
+    
+    // Y1 // used to do x and y separately, but since our shader results can't be accessed, we do x & y in 1 step (less performant, but necessary)
+//    SKEffectNode *shadedLayer_Pass2 = [self generateBlurEffectLayerWithName:@"shadedLayer_Pass2" inputNode:(SKEffectNode *)[shadedLayer_Pass1 copy]];
+//    [shadedLayer_Pass2 setValue:[SKAttributeValue valueWithVectorFloat2:resolution] forAttributeNamed:@"resolution"];
+//    [shadedLayer_Pass2 setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(1, 1, 1, 1)] forAttributeNamed:@"tint"];
+//    [shadedLayer_Pass2 setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(1.0, 1.0, 0)] forAttributeNamed:@"direction"];
+    
+    // X2
+    SKEffectNode *shadedLayer_Pass3 = [self generateBlurEffectLayerWithName:@"shadedLayer_Pass3" inputNode:(SKEffectNode *)[digitalClock copy]];
+    [shadedLayer_Pass3 setValue:[SKAttributeValue valueWithVectorFloat2:resolution] forAttributeNamed:@"resolution"];
+    //[shadedLayer_Pass3 setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(0.63, 0.64, 0.87, 1.0)] forAttributeNamed:@"tint"];
+    
+    simd_float4 color = simd_make_float4(0.7, 0.7, 0.9, glowMaxAlpha);
+    simd_float4 color_inverted = color;
+//    simd_float4 color = simd_make_float4([self.inlayColor redComponent],
+//                                         [self.inlayColor blueComponent],
+//                                         [self.inlayColor greenComponent],
+//                                         glowMaxAlpha);
+//    simd_float4 color_inverted = simd_make_float4(1.0 - color.r, 1.0 - color.g, 1.0 - color.b, glowMaxAlpha);
+    [shadedLayer_Pass3 setValue:[SKAttributeValue valueWithVectorFloat4:color_inverted] forAttributeNamed:@"tint"];
+
+    [shadedLayer_Pass3 setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(pass3Radius, pass3Radius, 0)] forAttributeNamed:@"direction"];
+    shadedLayer_Pass3.blendMode = SKBlendModeAdd;
+    
+    // Y2
+    SKEffectNode *shadedLayer_Pass4 = [self generateBlurEffectLayerWithName:@"shadedLayer_Pass4" inputNode:(SKEffectNode *)[digitalClock copy]];
+    [shadedLayer_Pass4 setValue:[SKAttributeValue valueWithVectorFloat2:resolution] forAttributeNamed:@"resolution"];
+    [shadedLayer_Pass4 setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(0.63, 0.64, 0.87, 1)] forAttributeNamed:@"tint"];
+    [shadedLayer_Pass4 setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(pass4Radius, pass4Radius, glowMaxAlpha)] forAttributeNamed:@"direction"];
+    
+    SKNode *shadedLayer_SuperPass_PreBlur = [SKNode node];
+    shadedLayer_SuperPass_PreBlur.name = @"shadedLayer_SuperPass_PreBlur";
+    [shadedLayer_SuperPass_PreBlur addChild:shadedLayer_Pass1];
+//    [shadedLayer_SuperPass_PreBlur addChild:shadedLayer_Pass2];
+    [shadedLayer_SuperPass_PreBlur addChild:shadedLayer_Pass3];
+    [shadedLayer_SuperPass_PreBlur addChild:shadedLayer_Pass4];
+    
+    // ===========
+    // above this point, is 4 blur passes in 2 different styles
+    // i thought we could "bake" these together by grouping them into a sprite
+    // and then apply a 5th shader pass on top of the previous 4 combined
+    // but it doesn't seem to work like that
+    // i don't think nesting effectnodes with shaders works.
+    
+    // X3
+//    SKEffectNode *shadedLayer_SuperPass1_x = [self generateBlurEffectLayerWithName:@"shadedLayer_SuperPass1_x" inputNode:[shadedLayer_SuperPass_PreBlur copy]];
+//    [shadedLayer_SuperPass1_x setValue:[SKAttributeValue valueWithVectorFloat2:resolution] forAttributeNamed:@"resolution"];
+//    [shadedLayer_SuperPass1_x setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(1,1,1,1)] forAttributeNamed:@"tint"];
+//    [shadedLayer_SuperPass1_x setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(pass3Radius, 0, 0)] forAttributeNamed:@"direction"];
+//
+//    // Y3
+//    SKEffectNode *shadedLayer_SuperPass1_y = [self generateBlurEffectLayerWithName:@"shadedLayer_SuperPass1_y" inputNode:(SKNode *)[shadedLayer_SuperPass1_x copy]];
+//    [shadedLayer_SuperPass1_y setValue:[SKAttributeValue valueWithVectorFloat2:resolution] forAttributeNamed:@"resolution"];
+//    [shadedLayer_SuperPass1_y setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(1,1,1,1)] forAttributeNamed:@"tint"];
+//    [shadedLayer_SuperPass1_y setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(0, pass3Radius, 0)] forAttributeNamed:@"direction"];
+//
+//    SKNode *shadedLayer_SuperPass2_PreBlur = [SKNode node];
+//    [shadedLayer_SuperPass2_PreBlur addChild:shadedLayer_SuperPass1_x];
+//    [shadedLayer_SuperPass2_PreBlur addChild:shadedLayer_SuperPass1_y];
+//
+//    // X4
+//    SKEffectNode *shadedLayer_SuperPass2_x = [self generateBlurEffectLayerWithName:@"shadedLayer_SuperPass2_x" inputNode:(SKNode *)[shadedLayer_SuperPass2_PreBlur copy]];
+//    [shadedLayer_SuperPass2_x setValue:[SKAttributeValue valueWithVectorFloat2:resolution] forAttributeNamed:@"resolution"];
+//    [shadedLayer_SuperPass2_x setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(1,1,1,1)] forAttributeNamed:@"tint"];
+//    [shadedLayer_SuperPass2_x setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(pass4Radius, 0, 0)] forAttributeNamed:@"direction"];
+//
+//    // Y4
+//    SKEffectNode *shadedLayer_SuperPass2_y = [self generateBlurEffectLayerWithName:@"shadedLayer_SuperPass2_y" inputNode:(SKNode *)[shadedLayer_SuperPass2_x copy]];
+//    [shadedLayer_SuperPass2_y setValue:[SKAttributeValue valueWithVectorFloat2:resolution] forAttributeNamed:@"resolution"];
+//    [shadedLayer_SuperPass2_y setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(1,1,1,1)] forAttributeNamed:@"tint"];
+//    [shadedLayer_SuperPass2_y setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(0, pass4Radius, 0)] forAttributeNamed:@"direction"];
+    
+    [glowGroup addChild:shadedLayer_SuperPass_PreBlur];
+    //[glowGroup addChild:[shadedLayer_SuperPass_PreBlur copy]];
+    //[glowGroup addChild:shadedLayer_SuperPass1_x];
+    //[glowGroup addChild:shadedLayer_SuperPass2_x];
+    //[glowGroup addChild:shadedLayer_SuperPass2_y];
+    
+    [glowGroup setScale:1.0/self.downsampleBlur];
+    
+    [gaugeFace childNodeWithName:@"DotMatrix"].zPosition = 20;
+    shadedLayer_SuperPass_PreBlur.zPosition = 19;
+//    shadedLayer_SuperPass1_x.zPosition = 18;
+//    shadedLayer_SuperPass1_y.zPosition = 18;
+//    shadedLayer_SuperPass2_x.zPosition = 21;
+//    shadedLayer_SuperPass2_y.zPosition = 21;
+    glowGroup.zPosition = 5;
+    digitalClock.zPosition = 6;
+    
+    //glowGroup.alpha = .1;
+    digitalClock.alpha = 1; //.95;
+    
+    SKSpriteNode *digitalClockSprite = (SKSpriteNode*)digitalClock;
+    SKSpriteNode *glowGroupSprite = (SKSpriteNode*)glowGroup;
+    
+    digitalClockSprite.blendMode = SKBlendModeAlpha; //SKBlendModeAdd;
+    glowGroupSprite.blendMode = SKBlendModeAdd;
+    
+//    if([self.textColor isEqual:[SKColor blackColor]]){
+//        glowGroupSprite.blendMode = SKBlendModeAlpha;
+//        shadedLayer_Pass1.blendMode = SKBlendModeAlpha;
+//        shadedLayer_Pass3.blendMode = SKBlendModeAlpha;
+//    }
+    
+    [gaugeFace addChild:glowGroup];
+}
+    
+-(SKEffectNode *)generateBlurEffectLayerWithName:(NSString *)name inputNode:(SKEffectNode *)inputNode
+{
+    // embed the label in a cropnode that is the same size as the full canvas
+    SKCropNode *cropLayer = [SKCropNode node];
+    cropLayer.name = @"cropLayer";
+    SKSpriteNode *inputAsSprite = (SKSpriteNode*)inputNode; //[inputNode copy];
+    [cropLayer addChild:inputAsSprite];
+    
+    // add a mask layer that it's the size of the full canvas
     SKSpriteNode *maskNode = [SKSpriteNode node];
     maskNode.name = @"maskNode";
     maskNode.size = CGSizeMake(184, 224); // full screen so blur isn't cut off by text label bounds
     maskNode.color = [SKColor colorWithRed:0 green:0 blue:0 alpha:0.1]; // black and nearly transparent, full transparent doesn't render
-    maskNode.zPosition = 3;
-    [glowContainer addChild:maskNode];
-    glowContainer.maskNode = maskNode;
-    //SKTexture *texture = [[self view] textureFromNode:glowContainer];
-    //SKSpriteNode *dClockGlow = [SKSpriteNode spriteNodeWithTexture:texture size:maskNode.size];
+    maskNode.zPosition = inputNode.zPosition - 1;
+    maskNode.position = CGPointMake(0,0);
+    [cropLayer addChild:maskNode];
+    //cropLayer.maskNode = maskNode;
     
-    SKEffectNode *dClockGlow = [SKEffectNode node];
-    [dClockGlow addChild:glowContainer];
-    dClockGlow.name = @"dClockGlow1";
-    dClockGlow.position = CGPointMake(0,0);
-    //dClockGlow.color = [SKColor redColor];
-    //dClockGlow.colorBlendFactor = 1.0;
+    // force color to white
+//    SKLabelNode *dTimeHour = (SKLabelNode *)[inputNode childNodeWithName:@"Digital Time Hour"];
+//    NSDictionary *attributes_old = [(NSAttributedString *)dTimeHour.attributedText attributesAtIndex:0 effectiveRange:NULL];
+//    NSMutableDictionary *attributes = [attributes_old mutableCopy];
+//    [attributes setValue:[SKColor whiteColor] forKey:NSForegroundColorAttributeName];
+//    dTimeHour.attributedText = [[NSAttributedString alloc] initWithString:[dTimeHour.attributedText string] attributes:attributes];
     
-    [dClockGlow setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(184, 224)] forAttributeNamed:@"resolution"];
-    //[dClockGlow setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(3, 1)] forAttributeNamed:@"radius"];
-    [dClockGlow setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(1, 1, 1, 1)] forAttributeNamed:@"tint"];
-    [dClockGlow setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(.5, .5, 0)] forAttributeNamed:@"direction"];
-    dClockGlow.shader = self.glowShader;
-    dClockGlow.shouldEnableEffects = YES;
-    dClockGlow.blendMode = SKBlendModeAdd; // SKBlendModeAlpha; // SKBlendModeAdd;
-    dClockGlow.zPosition = 5;
-    [glowGang addChild:dClockGlow];
+    //SKTexture *texture = [[self view] textureFromNode:cropLayer];
+    //SKSpriteNode *textureSprite = [SKSpriteNode spriteNodeWithTexture:texture size:maskNode.size];
     
-    //SKEffectNode *dClockGlow2 = [SKEffectNode node];
-    SKEffectNode *dClockGlow2 = [dClockGlow copy];
-    dClockGlow2.name = @"dClockGlow2";
-    [dClockGlow2 setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(184, 224)] forAttributeNamed:@"resolution"];
-    //[dClockGlow2 setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(20, 1)] forAttributeNamed:@"radius"];
-    [dClockGlow2 setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(1, 1, 0)] forAttributeNamed:@"direction"];
-    [dClockGlow2 setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(0.63, 0.64, 0.87, 1)] forAttributeNamed:@"tint"];
-    dClockGlow2.shader = self.glowShader;
-    dClockGlow2.shouldEnableEffects = YES;
-    dClockGlow2.blendMode = SKBlendModeAdd; // SKBlendModeAlpha; //SKBlendModeAdd;
-    //dClockGlow2.alpha = .5;
-    [glowGang addChild:dClockGlow2];
+    // put the crop layer into an effect layer where we will apply our shader
+    SKEffectNode *shadedLayer = [SKEffectNode node];
+    [shadedLayer addChild:cropLayer];
+    shadedLayer.name = name;
+    //shadedLayer.position = CGPointMake(0,0);
+    //shadedLayer.color = [SKColor redColor];
+    //shadedLayer.colorBlendFactor = 1.0;
     
-    SKEffectNode *secondPass = [SKEffectNode node];
-    secondPass.name = @"secondPass";
-    secondPass.shouldEnableEffects = YES;
-    secondPass.zPosition = 5;
-    [secondPass addChild:glowGang];
-    [secondPass setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(184, 224)] forAttributeNamed:@"resolution"];
-    //[secondPass setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(20, 1)] forAttributeNamed:@"radius"];
-    [secondPass setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(-1.5, -1.5, 0)] forAttributeNamed:@"direction"];
-    [secondPass setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(0.63, 0.64, 0.87, 1)] forAttributeNamed:@"tint"];
-    secondPass.shader = self.glowShader;
-    secondPass.blendMode = SKBlendModeAdd; // SKBlendModeAlpha; //SKBlendModeAdd;
+    // downsampling
+    if(self.downsampleBlur){
+        [cropLayer setScale:_downsampleBlur];
+    }
+
+    shadedLayer.shader = self.glowShader;
+    shadedLayer.shouldEnableEffects = YES;
     
-    SKEffectNode *subPass = [secondPass copy];
-    subPass.name = @"subPass";
-    subPass.shouldEnableEffects = YES;
-    subPass.zPosition = 5;
-    [subPass addChild:[glowGang copy]];
-    [subPass setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(184, 224)] forAttributeNamed:@"resolution"];
-    //[subPass setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(20, 1)] forAttributeNamed:@"radius"];
-    [subPass setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(-3, -3, 0)] forAttributeNamed:@"direction"];
-    [subPass setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(0.63, 0.64, 0.87, 1)] forAttributeNamed:@"tint"];
-    subPass.shader = self.glowShader;
-    subPass.blendMode = SKBlendModeAdd; // SKBlendModeAlpha; //SKBlendModeAdd;
-    [glowGang addChild:subPass];
-    
-    SKEffectNode *thirdPass = [SKEffectNode node];
-    [thirdPass addChild:secondPass];
-    thirdPass.name = @"GlowGang";
-    thirdPass.shouldEnableEffects = YES;
-    thirdPass.zPosition = 5;
-    [thirdPass setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(184, 224)] forAttributeNamed:@"resolution"];
-    //[thirdPass setValue:[SKAttributeValue valueWithVectorFloat2:simd_make_float2(20, 1)] forAttributeNamed:@"radius"];
-    [thirdPass setValue:[SKAttributeValue valueWithVectorFloat3:simd_make_float3(-1.5, 1, 0)] forAttributeNamed:@"direction"];
-    [thirdPass setValue:[SKAttributeValue valueWithVectorFloat4:simd_make_float4(0.63, 0.64, 0.87, 1)] forAttributeNamed:@"tint"];
-    thirdPass.shader = self.glowShader;
-    thirdPass.blendMode = SKBlendModeAdd; // SKBlendModeAlpha; //SKBlendModeAdd;
-    
-    digitalClock.alpha = .9;
-    SKSpriteNode *digitalClockSprite = (SKSpriteNode*)digitalClock;
-    digitalClockSprite.blendMode = SKBlendModeAlpha; //SKBlendModeAdd;
-    glowGang.alpha = 1;
-    [gaugeFace addChild:thirdPass];
+    return shadedLayer;
 }
 
 -(void)refreshTheme

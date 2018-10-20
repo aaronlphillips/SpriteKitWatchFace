@@ -139,6 +139,7 @@ typedef enum : NSUInteger {
 @property BOOL showSecondhand;
 @property BOOL debugSpeedEnabled;
 @property BOOL glowFXEnabled;
+@property CGFloat downsampleBlur;
 @property SKAction *secondHandAction;
 @property NSString *prevDateString; // second resolution cachebuster for perf
 @property CGFloat gaugeFaceWindowAngleFactor;
