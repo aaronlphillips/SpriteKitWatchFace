@@ -65,18 +65,10 @@ void main() {
     }
     
     float divisor = (tap25 ? 25.0 : 9.0);
-    color = color / (divisor * .5);
-    
-    color *= tint * 2.0;
-    
-    float alpha = min((texCol.a * 4.0), tint.a);
-    // cutout
-//    if(alpha >= 0.9){
-//        alpha = 0;
-//    }else {
-//
-//    }
-    color *= alpha;
+    color = color / divisor; //(divisor * .5);
+    color.rgb *= tint.rgb;
+    color.a *= 1.0 - tint.a; //min(color.a, tint.a);
+
     gl_FragColor = color;
     
     //=======================================================
