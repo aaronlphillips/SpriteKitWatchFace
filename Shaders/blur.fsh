@@ -1,74 +1,61 @@
-// 13.glsl
+// based on 13.glsl
 // https://github.com/Jam3/glsl-fast-gaussian-blur 
 void main() {
-//    vec4 texCol = texture2D( u_texture, v_tex_coord );
-//    vec4 color = vec4(0.0);
-//    vec2 off1 = vec2(1.411764705882353) * direction.xy;
-//    vec2 off2 = vec2(3.2941176470588234) * direction.xy;
-//    vec2 off3 = vec2(5.176470588235294) * direction.xy;
-//    color += texture2D(u_texture, v_tex_coord) * 0.1964825501511404;
-//    color += texture2D(u_texture, v_tex_coord + (off1 / resolution)) * 0.2969069646728344;
-//    color += texture2D(u_texture, v_tex_coord - (off1 / resolution)) * 0.2969069646728344;
-//    color += texture2D(u_texture, v_tex_coord + (off2 / resolution)) * 0.09447039785044732;
-//    color += texture2D(u_texture, v_tex_coord - (off2 / resolution)) * 0.09447039785044732;
-//    color += texture2D(u_texture, v_tex_coord + (off3 / resolution)) * 0.010381362401148057;
-//    color += texture2D(u_texture, v_tex_coord - (off3 / resolution)) * 0.010381362401148057;
-//
-//    color *= tint;
-//    float alpha = min((color.a * 4.0), tint.a);
-//    gl_FragColor = color * alpha;
-    
-    
-    
     //=======================================================
-    // boxblur
+    // hybrid box/gaussian blur
     //=======================================================
     vec4 texCol = texture2D( u_texture, v_tex_coord );
     vec4 color = vec4(0.0);
     
-    vec2 step = direction.xy / resolution; //vec2(radius.x / resolution.x, radius.y / resolution.y);
+    color += texture2D(u_texture, v_tex_coord) * 0.2;
     
-    // default to tap9
-    bool tap25 = false;
+    // Horiz
+    color += texture2D(u_texture, v_tex_coord + vec2(steps.x,0)) * 0.2;
+    color += texture2D(u_texture, v_tex_coord - vec2(steps.x,0)) * 0.2;
+    color += texture2D(u_texture, v_tex_coord + vec2(steps.z,0)) * 0.2;
+    color += texture2D(u_texture, v_tex_coord - vec2(steps.z,0)) * 0.2;
     
-    //color += texture2D(u_texture, v_tex_coord + step); // * 0.1964825501511404;
-    color += texture2D(u_texture, v_tex_coord + step * vec2(0.0, -1.0)); // * 0.2969069646728344;
-    color += texture2D(u_texture, v_tex_coord + step * vec2(0.0, 1.0)); // * 0.2969069646728344;
+//    color += texture2D(u_texture, v_tex_coord + vec2(steps2.x,0)) * 0.1;
+//    color += texture2D(u_texture, v_tex_coord - vec2(steps2.x,0)) * 0.1;
+//    color += texture2D(u_texture, v_tex_coord + vec2(steps2.z,0)) * 0.1;
+//    color += texture2D(u_texture, v_tex_coord - vec2(steps2.z,0)) * 0.1;
     
-    color += texture2D(u_texture, v_tex_coord + step * vec2(-1.0, 0.0)); // * 0.09447039785044732;
-    color += texture2D(u_texture, v_tex_coord + step * vec2(-1.0, -1.0)); // * 0.09447039785044732;
-    color += texture2D(u_texture, v_tex_coord + step * vec2(-1.0, 1.0)); // * 0.010381362401148057;
+    // Vert
+    color += texture2D(u_texture, v_tex_coord + vec2(0,steps.y)) * 0.2;
+    color += texture2D(u_texture, v_tex_coord - vec2(0,steps.y)) * 0.2;
+    color += texture2D(u_texture, v_tex_coord + vec2(0,steps.w)) * 0.2;
+    color += texture2D(u_texture, v_tex_coord - vec2(0,steps.w)) * 0.2;
     
-    color += texture2D(u_texture, v_tex_coord + step * vec2(1.0, 0.0)); // * 0.09447039785044732;
-    color += texture2D(u_texture, v_tex_coord + step * vec2(1.0, -1.0)); // * 0.010381362401148057;
-    color += texture2D(u_texture, v_tex_coord + step * vec2(1.0, 1.0)); // * 0.010381362401148057;
+//    color += texture2D(u_texture, v_tex_coord + vec2(0,steps2.y)) * 0.1;
+//    color += texture2D(u_texture, v_tex_coord - vec2(0,steps2.y)) * 0.1;
+//    color += texture2D(u_texture, v_tex_coord + vec2(0,steps2.w)) * 0.1;
+//    color += texture2D(u_texture, v_tex_coord - vec2(0,steps2.w)) * 0.1;
     
-    if(tap25){
-        color += texture2D(u_texture, v_tex_coord + step * vec2(0.0, -2.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(0.0, 2.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(-1.0, -2.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(-1.0, 2.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(1.0, -2.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(1.0, 2.0));
-        
-        color += texture2D(u_texture, v_tex_coord + step * vec2(-2.0, 0.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(-2.0, -1.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(-2.0, 1.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(-2.0, -2.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(-2.0, 2.0));
-        
-        color += texture2D(u_texture, v_tex_coord + step * vec2(2.0, 0.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(2.0, -1.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(2.0, 1.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(2.0, -2.0));
-        color += texture2D(u_texture, v_tex_coord + step * vec2(2.0, 2.0));
-    }
+    // Diag NE SW
+    color += texture2D(u_texture, v_tex_coord + steps2.xx) * 0.15;
+    color += texture2D(u_texture, v_tex_coord - steps2.xx) * 0.15;
+    color += texture2D(u_texture, v_tex_coord + steps2.zz) * 0.15;
+    color += texture2D(u_texture, v_tex_coord - steps2.zz) * 0.15;
     
-    float divisor = (tap25 ? 25.0 : 9.0);
-    color = color / divisor; //(divisor * .5);
-    color.rgb *= tint.rgb;
-    color.a *= 1.0 - tint.a; //min(color.a, tint.a);
+//    color += texture2D(u_texture, v_tex_coord + steps2.xx) * 0.05;
+//    color += texture2D(u_texture, v_tex_coord - steps2.xx) * 0.05;
+//    color += texture2D(u_texture, v_tex_coord + steps2.zz) * 0.05;
+//    color += texture2D(u_texture, v_tex_coord - steps2.zz) * 0.05;
 
+    // Diag NW SE
+    color += texture2D(u_texture, v_tex_coord + vec2(steps2.x,-steps2.x)) * 0.15;
+    color += texture2D(u_texture, v_tex_coord - vec2(steps2.x,-steps2.x)) * 0.15;
+    color += texture2D(u_texture, v_tex_coord + vec2(steps2.w,-steps2.w)) * 0.15;
+    color += texture2D(u_texture, v_tex_coord - vec2(steps2.w,-steps2.w)) * 0.15;
+    
+//    color += texture2D(u_texture, v_tex_coord + vec2(steps2.x,-steps2.x)) * 0.05;
+//    color += texture2D(u_texture, v_tex_coord - vec2(steps2.x,-steps2.x)) * 0.05;
+//    color += texture2D(u_texture, v_tex_coord + vec2(steps2.w,-steps2.w)) * 0.05;
+//    color += texture2D(u_texture, v_tex_coord - vec2(steps2.w,-steps2.w)) * 0.05;
+
+    color.rgb *= tint.rgb;
+    color.rgb *= vec3(tint.a); // intensity
+    color.a *= 1.0 - max(color.a, tint.a);
     gl_FragColor = color;
     
     //=======================================================

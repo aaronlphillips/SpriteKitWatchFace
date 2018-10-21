@@ -129,6 +129,10 @@ typedef enum : NSUInteger {
 @property SKColor *alternateMinorMarkColor;
 @property SKColor *alternateTextColor;
     
+@property SKColor *glowTint;
+@property SKColor *digitalClockTextColor;
+@property SKColor *gaugeFaceOverlayTint;
+    
 @property SKShader *glowShader;
 @property NSDate *now;
 
@@ -142,6 +146,7 @@ typedef enum : NSUInteger {
 @property CGFloat downsampleBlur;
 @property SKAction *secondHandAction;
 @property NSString *prevDateString; // second resolution cachebuster for perf
+@property NSString *prevDateMinString;
 @property CGFloat gaugeFaceWindowAngleFactor;
 
 @property BOOL showLogo;

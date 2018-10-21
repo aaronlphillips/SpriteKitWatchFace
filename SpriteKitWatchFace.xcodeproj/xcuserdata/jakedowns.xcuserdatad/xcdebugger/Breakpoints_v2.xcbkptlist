@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpriteKitWatchFace WatchKit Extension/FaceScene.m"
-            timestampString = "561766867.376981"
+            timestampString = "561788765.0378211"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1582"
-            endingLineNumber = "1582"
+            startingLineNumber = "1595"
+            endingLineNumber = "1595"
             landmarkName = "-updateHands"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpriteKitWatchFace WatchKit Extension/FaceScene.m"
-            timestampString = "561766867.379078"
+            timestampString = "561788765.039194"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1719"
-            endingLineNumber = "1719"
+            startingLineNumber = "1740"
+            endingLineNumber = "1740"
             landmarkName = "-updateGaugeDigitalClock::"
             landmarkType = "7">
          </BreakpointContent>
@@ -42,12 +42,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpriteKitWatchFace WatchKit Extension/FaceScene.m"
-            timestampString = "561766867.380308"
+            timestampString = "561788765.039902"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1727"
-            endingLineNumber = "1727"
-            landmarkName = "-updateGaugeDigitalClock::"
+            startingLineNumber = "1840"
+            endingLineNumber = "1840"
+            landmarkName = "-drawGaugeDigitalClockFlashingSeparator:h:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
