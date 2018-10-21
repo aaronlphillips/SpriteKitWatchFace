@@ -1886,7 +1886,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         digitalClock.zPosition = 6;
         
         //glowGroup.alpha = .1;
-        digitalClock.alpha = .5; //.7;
+        digitalClock.alpha = .8; //.7;
         
         SKSpriteNode *digitalClockSprite = (SKSpriteNode*)digitalClock;
         SKSpriteNode *glowGroupSprite = (SKSpriteNode*)glowGroup;

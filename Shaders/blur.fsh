@@ -56,6 +56,19 @@ void main() {
     color.rgb *= tint.rgb;
     color.rgb *= vec3(tint.a); // intensity
     color.a *= 1.0 - max(color.a, tint.a);
+    
+    float scanlineIntensity = .5;
+    float scanlineCount = 400;
+    float scanlineYDelta = sin(u_time / 200.0);
+    
+    float _dot = dot(vec4(1.0, 1.0, 1.0, 0.0), color); // 3.0 for white, 0.0 for black
+    if(_dot > 0){
+        float factor = 1.0 / 3.0  * _dot;
+        float scanline = sin((v_tex_coord.y - scanlineYDelta) * scanlineCount) * (scanlineIntensity * factor);
+        color -= scanline;
+    }
+    
+    
     gl_FragColor = color;
     
     //=======================================================
