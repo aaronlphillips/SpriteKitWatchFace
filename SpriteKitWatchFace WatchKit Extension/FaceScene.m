@@ -991,7 +991,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     
     SKColor *glowTint = [SKColor colorWithRed:.7 green:0.7 blue:0.9 alpha:1];
     SKColor *digitalClockTextColor = [SKColor colorWithWhite:0.7 alpha:1];
-    SKColor *gaugeFaceOverlayTint = [SKColor colorWithDeviceWhite:0.5 alpha:1];
+    SKColor *gaugeFaceOverlayTint = [SKColor colorWithWhite:0.5 alpha:1];
 	
 	SKColor *alternateMajorMarkColor = nil;
 	SKColor *alternateMinorMarkColor = nil;
@@ -1968,10 +1968,12 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     preCalcedSteps2.xy = simd_make_float2(.8,.8) * direction.xy / resolution.xy;
     preCalcedSteps2.zw = simd_make_float2(.8,.8) * direction.xy / resolution.xy;
     
-    NSLog(@"glowTint %@", [self.glowTint colorSpace]);
-    simd_float4 tint = simd_make_float4(self.glowTint.redComponent,
-                                        self.glowTint.greenComponent,
-                                        self.glowTint.blueComponent, glowMaxAlpha);
+    //NSLog(@"glowTint %@", [self.glowTint colorSpace]);
+    CGFloat red, green, blue, alpha;
+    [[self glowTint] getRed:&red green:&green blue:&blue alpha:&alpha];
+    simd_float4 tint = simd_make_float4(red,
+                                        green,
+                                        blue, glowMaxAlpha);
     //tint.alpha = glowMaxAlpha;
     //simd_float4 tint_inverted = tint;
     //    simd_float4 color = simd_make_float4([self.inlayColor redComponent],
