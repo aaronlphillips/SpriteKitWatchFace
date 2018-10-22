@@ -29,6 +29,7 @@
 #define PREPARE_SCREENSHOT 0
 
 BOOL glowShaderInitialized = 0;
+const BOOL USE_SHADER_CACHING = 1;
 
 CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 {
@@ -161,7 +162,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 		
         NSLog(@"Permutations per theme = %lu", FaceStyleMAX*NumeralStyleMAX*TickmarkStyleMAX*(TickmarkShapeMAX*2)*ColorRegionStyleMAX*DateStyleMAX*CenterDiscStyleMAX*DateQuadrantMAX);
         NSLog(@"Total permutations = %lu", ThemeMAX*FaceStyleMAX*NumeralStyleMAX*TickmarkStyleMAX*(TickmarkShapeMAX*2)*ColorRegionStyleMAX*DateStyleMAX*CenterDiscStyleMAX*DateQuadrantMAX);
-		
+
 		self.delegate = self;
 	}
 	return self;
@@ -173,12 +174,14 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     [self refreshTheme];
 }
 
-// (not available on WatchOS) :/
-//-(void)didMoveToView:(SKView *)view
-//{
-//    NSLog(@"didMoveToView");
-//    [self refreshTheme];
-//}
+#if !TARGET_OS_WATCH
+-(void)didMoveToView:(SKView *)view
+{
+    NSLog(@"didMoveToView");
+    [self refreshTheme];
+}
+#endif
+
 
 #pragma mark -
 
@@ -989,7 +992,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 	SKColor *textColor = nil;
 	SKColor *secondHandColor = nil;
     
-    SKColor *glowTint = [SKColor colorWithRed:.7 green:0.7 blue:0.9 alpha:1];
+    SKColor *glowTint = [SKColor colorWithRed:0.48 green:0.51 blue:0.82 alpha:1.0]; //[SKColor colorWithRed:.7 green:0.7 blue:0.9 alpha:1];
     SKColor *digitalClockTextColor = [SKColor colorWithWhite:0.7 alpha:1];
     SKColor *gaugeFaceOverlayTint = [SKColor colorWithWhite:0.5 alpha:1];
 	
@@ -1746,7 +1749,7 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     dTimeAMPM.attributedText = [[NSAttributedString alloc] initWithString:[[df stringFromDate:[self now]] uppercaseString] attributes:attributes];
     
     // update dclock blurred clone
-    if(_glowFXEnabled){
+    if(_glowFXEnabled && !USE_SHADER_CACHING){
         SKNode *gaugeFace = [self childNodeWithName:@"GaugeFace"];
         //SKNode *digitalClock = [gaugeFace childNodeWithName:@"DigitalClock"];
         SKNode *glowGroup = [gaugeFace childNodeWithName:@"glowGroup"];
@@ -1814,29 +1817,43 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     SKNode *sepAndFX = [SKNode node];
     sepAndFX.name = @"sepAndFX";
     
-    BOOL separateLayerForSeparator = FALSE;
+    BOOL separateLayerForSeparator = TRUE;
+    BOOL animateFlashingSeparator = TRUE;
+    
+    sepAndFX.position = CGPointMake(0,y);
+    sepAndFX.zPosition = 5;
 
-    if(_glowFXEnabled && separateLayerForSeparator){
+    if(_glowFXEnabled && separateLayerForSeparator && self.outerViewReference){
         SKEffectNode *sepBlurred = [self generateBlurEffectLayerWithName:@"sepBlur" inputNode:(SKEffectNode*)[dTimeSep copy]];
         SKNode *fx = [SKNode node];
         [fx setScale:1.0/self.downsampleBlur];
         [fx addChild:sepBlurred];
         [sepAndFX addChild:fx];
-        //sepBlurred.shouldRasterize = YES;
+        [sepAndFX addChild:dTimeSep];
+        
+        SKNode *cachedSepAndBlur = [self cacheShaderResultsToTexturedSprite:sepAndFX];
+        cachedSepAndBlur.zPosition = 5;
+        cachedSepAndBlur.name = @"sepAndFX"; // tag so it's removed on refresh
+        ((SKSpriteNode*)cachedSepAndBlur).blendMode = SKBlendModeAdd;
+        
+        if(animateFlashingSeparator){
+            //CGFloat ampmFadeDuration = .5; //1.0;
+            SKAction *fadeOut = [SKAction fadeAlphaTo:0.0 duration: .7];
+            SKAction *fadeIn = [SKAction fadeAlphaTo: 1.0 duration: .3];
+            [cachedSepAndBlur runAction:[SKAction repeatActionForever:[SKAction sequence:[NSArray arrayWithObjects:fadeIn, fadeOut, nil]]]];
+        }
+        
+         [gaugeFace addChild:cachedSepAndBlur];
     }
     
-    //CGFloat ampmFadeDuration = .5; //1.0;
-    SKAction *fadeOut = [SKAction fadeAlphaTo:0.0 duration: .7];
-    SKAction *fadeIn = [SKAction fadeAlphaTo: 1.0 duration: .3];
-    [sepAndFX runAction:[SKAction repeatActionForever:[SKAction sequence:[NSArray arrayWithObjects:fadeIn, fadeOut, nil]]]];
-
-    sepAndFX.position = CGPointMake(0,y);
-    sepAndFX.zPosition = 5;
-    [sepAndFX addChild:dTimeSep];
-
-    if(separateLayerForSeparator){
-        [gaugeFace addChild:sepAndFX];
-    }else{
+    if(!separateLayerForSeparator){
+        if(animateFlashingSeparator){
+            //CGFloat ampmFadeDuration = .5; //1.0;
+            SKAction *fadeOut = [SKAction fadeAlphaTo:0.0 duration: .7];
+            SKAction *fadeIn = [SKAction fadeAlphaTo: 1.0 duration: .3];
+            [sepAndFX runAction:[SKAction repeatActionForever:[SKAction sequence:[NSArray arrayWithObjects:fadeIn, fadeOut, nil]]]];
+        }
+        [sepAndFX addChild:dTimeSep];
         [digitalClock addChild:sepAndFX];
     }
 }
@@ -1846,10 +1863,14 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     SKNode *gaugeFace = [self childNodeWithName:@"GaugeFace"];
     SKNode *digitalClock = [gaugeFace childNodeWithName:@"DigitalClock"];
     SKNode *glowGroup = [gaugeFace childNodeWithName:@"glowGroup"];
+    SKNode *cachedShaderOutput = [gaugeFace childNodeWithName:@"cachedShaderOutput"];
     
     if(!self.glowFXEnabled){
         if(glowGroup != nil){
             [glowGroup removeFromParent];
+        }
+        if(cachedShaderOutput != nil){
+            [cachedShaderOutput removeFromParent];
         }
         glowShaderInitialized = 0;
         return;
@@ -1858,10 +1879,16 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     //glowShaderInitialized = 0;
     if(glowShaderInitialized & (glowGroup != nil)){
         // internals updated in updategaugeDigitalClock
+        // update cached results with a new "tick" of the shader later
     }else{
+        //NSLog(@"re-rendering glow");
         if(glowGroup != nil){
             [glowGroup removeFromParent];
         }
+        if(cachedShaderOutput != nil){
+            [cachedShaderOutput removeFromParent];
+        }
+
         
         // set it up
         glowGroup = [SKSpriteNode node];
@@ -1894,15 +1921,36 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
         digitalClockSprite.blendMode = SKBlendModeReplace; //SKBlendModeAlpha; //SKBlendModeAdd;
         glowGroupSprite.blendMode = SKBlendModeAdd;
         
+        SKNode *cachedShaderOutputSprite = [self cacheShaderResultsToTexturedSprite:glowGroup];
+        if(cachedShaderOutputSprite){
+            // disable LIVE shader
+            // display cached results
+            cachedShaderOutputSprite.zPosition = 21;
+            cachedShaderOutputSprite.name = @"cachedShaderOutput";
+            ((SKSpriteNode*)cachedShaderOutputSprite).blendMode = SKBlendModeAdd;
+            [gaugeFace addChild:cachedShaderOutputSprite];
+            
+//            SKSpriteNode *cachedShaderOutputSpriteClone = [cachedShaderOutputSprite copy];
+//            cachedShaderOutputSpriteClone.name = @"cachedShaderOutput";
+//            cachedShaderOutputSpriteClone.alpha = 0.5;
+//            [gaugeFace addChild:cachedShaderOutputSpriteClone];
+
+            // debug live + baked
+            //glowGroup.position = CGPointMake(10, 10);
+            //shadedLayer_Pass1.shader = nil;
+            //[gaugeFace addChild:glowGroup];
+            glowGroup = nil; // release
+        }else{
+            [gaugeFace addChild:glowGroup]; // fallback to LIVE shader
+        }
+        //
         //    if([self.textColor isEqual:[SKColor blackColor]]){
         //        glowGroupSprite.blendMode = SKBlendModeAlpha;
         //        shadedLayer_Pass1.blendMode = SKBlendModeAlpha;
         //        shadedLayer_Pass3.blendMode = SKBlendModeAlpha;
         //    }
         
-        glowShaderInitialized = 1;
-        
-        [gaugeFace addChild:glowGroup];
+        glowShaderInitialized = 1; // flag so we don't re-run shader until we need to
     }
     
 }
@@ -1932,9 +1980,6 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
 //    NSMutableDictionary *attributes = [attributes_old mutableCopy];
 //    [attributes setValue:[SKColor whiteColor] forKey:NSForegroundColorAttributeName];
 //    dTimeHour.attributedText = [[NSAttributedString alloc] initWithString:[dTimeHour.attributedText string] attributes:attributes];
-    
-    //SKTexture *texture = [[self view] textureFromNode:cropLayer];
-    //SKSpriteNode *textureSprite = [SKSpriteNode spriteNodeWithTexture:texture size:maskNode.size];
     
     // put the crop layer into an effect layer where we will apply our shader
     SKEffectNode *shadedLayer = [SKEffectNode node];
@@ -1987,6 +2032,17 @@ CGFloat workingRadiusForFaceOfSizeWithAngle(CGSize faceSize, CGFloat angle)
     shadedLayer.blendMode = SKBlendModeAdd;
     
     return shadedLayer;
+}
+    
+-(nullable SKNode*)cacheShaderResultsToTexturedSprite:(SKNode*)shadedLayer
+{
+    if(self.outerViewReference){
+        SKTexture *texture = [self.outerViewReference textureFromNode:shadedLayer];
+        SKSpriteNode *textureSprite = [SKSpriteNode spriteNodeWithTexture:texture size:CGSizeMake(184, 224)];
+        return (SKNode*)textureSprite;
+    }
+    
+    return nil;
 }
 
 -(void)refreshTheme

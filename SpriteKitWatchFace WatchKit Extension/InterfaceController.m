@@ -54,6 +54,13 @@
     NSLog(@"cam pos %f %f" , scene.camera.position.x, scene.camera.position.y);
     NSLog(@"scene size %f %f", scene.size.width, scene.size.height);
     
+    //if (@available(iOS 10.0, *)) {
+        self.scene.preferredFramesPerSecond = 30; // reduce framerate to hopefully reduce battery consumption
+    //} else {
+    //    self.scene.frameInterval = 4; //Deprecated
+    //}
+
+    scene.outerViewReference = self.scene;
 	[self.scene presentScene:scene];
 }
 

@@ -26,6 +26,7 @@
 	scene.camera.xScale = (184.0/vertWidth);
 	scene.camera.yScale = (184.0/vertWidth);
 	
+    scene.outerViewReference = (SKView *)self.view;
 	[(SKView *)self.view presentScene:scene];
 }
 

@@ -8,6 +8,10 @@
 
 #import <SpriteKit/SpriteKit.h>
 
+#if TARGET_OS_WATCH
+#import <WatchKit/WKInterfaceSKScene.h>
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef enum : NSUInteger {
@@ -132,7 +136,15 @@ typedef enum : NSUInteger {
 @property SKColor *glowTint;
 @property SKColor *digitalClockTextColor;
 @property SKColor *gaugeFaceOverlayTint;
-    
+
+// this block is so we can use either textureFromNode
+// which is available on different a different class in WatchOS
+#if TARGET_OS_WATCH
+@property WKInterfaceSKScene *outerViewReference;
+#else
+@property SKView *outerViewReference;
+#endif
+
 @property SKShader *glowShader;
 @property NSDate *now;
 

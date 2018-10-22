@@ -10,12 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpriteKitWatchFace WatchKit Extension/FaceScene.m"
-            timestampString = "561840120.05994"
+            timestampString = "561867488.360949"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1595"
-            endingLineNumber = "1595"
-            landmarkName = "-updateHands"
+            startingLineNumber = "1884"
+            endingLineNumber = "1884"
+            landmarkName = "-updateGaugeDigitalClockGlow"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -26,28 +26,44 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpriteKitWatchFace WatchKit Extension/FaceScene.m"
-            timestampString = "561840120.06127"
+            timestampString = "561867488.361925"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1740"
-            endingLineNumber = "1740"
-            landmarkName = "-updateGaugeDigitalClock::"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SpriteKitWatchFace WatchKit Extension/FaceScene.m"
-            timestampString = "561840120.062187"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1840"
-            endingLineNumber = "1840"
+            startingLineNumber = "1834"
+            endingLineNumber = "1834"
             landmarkName = "-drawGaugeDigitalClockFlashingSeparator:h:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SpriteKitWatchFace WatchKit Extension/FaceScene.m"
+            timestampString = "561867488.3622971"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1846"
+            endingLineNumber = "1846"
+            landmarkName = "-drawGaugeDigitalClockFlashingSeparator:h:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DesktopShim/ViewController.m"
+            timestampString = "561867488.3627141"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "-viewDidLoad"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
