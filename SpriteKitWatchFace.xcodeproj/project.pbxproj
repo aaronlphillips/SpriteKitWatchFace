@@ -672,7 +672,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.highcaffeinecontent.SpriteKitWatchFace.watchkitapp.watchkitextension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sparetimemi.SpriteKitWatchFace.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -693,7 +693,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.highcaffeinecontent.SpriteKitWatchFace.watchkitapp.watchkitextension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sparetimemi.SpriteKitWatchFace.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -710,7 +710,7 @@
 				DEVELOPMENT_TEAM = 2ZDN69KUUV;
 				IBSC_MODULE = SpriteKitWatchFace_WatchKit_Extension;
 				INFOPLIST_FILE = "SpriteKitWatchFace WatchKit App/Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = com.highcaffeinecontent.SpriteKitWatchFace.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sparetimemi.SpriteKitWatchFace.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = NO;
@@ -727,7 +727,7 @@
 				DEVELOPMENT_TEAM = 2ZDN69KUUV;
 				IBSC_MODULE = SpriteKitWatchFace_WatchKit_Extension;
 				INFOPLIST_FILE = "SpriteKitWatchFace WatchKit App/Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = com.highcaffeinecontent.SpriteKitWatchFace.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sparetimemi.SpriteKitWatchFace.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = NO;
@@ -747,7 +747,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.highcaffeinecontent.SpriteKitWatchFace;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sparetimemi.SpriteKitWatchFace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -764,7 +764,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.highcaffeinecontent.SpriteKitWatchFace;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sparetimemi.SpriteKitWatchFace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -785,7 +785,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				PRODUCT_BUNDLE_IDENTIFIER = com.highcaffeinecontent.SKWFDesktopShim;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sparetimemi.SKWFDesktopShim;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -806,7 +806,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_BUNDLE_IDENTIFIER = com.highcaffeinecontent.SKWFDesktopShim;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sparetimemi.SKWFDesktopShim;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};

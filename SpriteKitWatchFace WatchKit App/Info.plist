@@ -26,7 +26,7 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>WKCompanionAppBundleIdentifier</key>
-	<string>com.highcaffeinecontent.SpriteKitWatchFace</string>
+	<string>com.sparetimemi.SpriteKitWatchFace</string>
 	<key>WKWatchKitApp</key>
 	<true/>
 </dict>
